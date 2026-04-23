@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { FiMenu, FiX, FiChevronDown, FiUser } from 'react-icons/fi'
+import { FiMenu, FiX, FiChevronDown, FiUser, FiSearch } from 'react-icons/fi'
 
 function useSiteSettings() {
   const pathname = usePathname()
@@ -63,15 +63,35 @@ function DropdownItem({ link, pathname, onClose }: {
   if (!link.children) {
     return (
       <li>
-        <Link
-          href={link.href!}
-          onClick={onClose}
-          className={`flex items-center px-3.5 py-2 text-[15px] font-medium transition-colors rounded-lg ${
-            pathname === link.href ? 'text-[#CC2229]' : 'text-gray-700 hover:text-[#CC2229]'
-          }`}
-        >
-          {link.label}
-        </Link>
+        {(() => {
+          const isFinder = link.label === 'Course Finder'
+          if (isFinder) {
+            return (
+              <Link
+                href={link.href!}
+                onClick={onClose}
+                className={`inline-flex items-center gap-2 px-4 py-2 text-[15px] font-semibold transition-all rounded-full shadow-sm ${
+                  pathname === link.href ? 'bg-[#CC2229] text-white' : 'bg-[#fff3f3] text-[#CC2229] hover:bg-[#ffd6d6]'
+                }`}
+              >
+                <FiSearch size={14} />
+                {link.label}
+              </Link>
+            )
+          }
+
+          return (
+            <Link
+              href={link.href!}
+              onClick={onClose}
+              className={`flex items-center px-3.5 py-2 text-[15px] font-medium transition-colors rounded-lg ${
+                pathname === link.href ? 'text-[#CC2229]' : 'text-gray-700 hover:text-[#CC2229]'
+              }`}
+            >
+              {link.label}
+            </Link>
+          )
+        })()}
       </li>
     )
   }
@@ -209,12 +229,31 @@ export default function Navbar() {
                     />
                   </button>
                 ) : (
-                  <Link href={link.href} onClick={() => setOpen(false)}
-                    className={`block py-3 text-[15px] font-medium border-b border-gray-100 transition-colors ${
-                      pathname === link.href ? 'text-[#CC2229]' : 'text-gray-700 hover:text-[#CC2229]'
-                    }`}>
-                    {link.label}
-                  </Link>
+                  <>
+                    {(() => {
+                      const isFinder = link.label === 'Course Finder'
+                      if (isFinder) {
+                        return (
+                          <Link href={link.href} onClick={() => setOpen(false)}
+                            className={`flex items-center gap-2 py-3 px-2 font-semibold border-b border-gray-100 transition-colors ${
+                              pathname === link.href ? 'bg-[#fff3f3] text-[#CC2229]' : 'text-[#CC2229]'
+                            }`}>
+                            <FiSearch size={14} />
+                            {link.label}
+                          </Link>
+                        )
+                      }
+
+                      return (
+                        <Link href={link.href} onClick={() => setOpen(false)}
+                          className={`block py-3 text-[15px] font-medium border-b border-gray-100 transition-colors ${
+                            pathname === link.href ? 'text-[#CC2229]' : 'text-gray-700 hover:text-[#CC2229]'
+                          }`}>
+                          {link.label}
+                        </Link>
+                      )
+                    })()}
+                  </>
                 )}
                 {link.children && mobileExpanded === link.label && (
                   <div
