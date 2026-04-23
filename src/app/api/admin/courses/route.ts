@@ -17,16 +17,30 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   if (!auth(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  await connectDB()
-  const body = await req.json()
-  const doc = await AdminCourse.create(body)
-  return NextResponse.json(doc, { status: 201 })
+  try {
+    await connectDB()
+    const body = await req.json()
+    const doc = await AdminCourse.create(body)
+    return NextResponse.json(doc, { status: 201 })
+  } catch (err: any) {
+    if (err.code === 11000) {
+      return NextResponse.json({ message: 'A course with this slug already exists. Use a different slug.' }, { status: 400 })
+    }
+    return NextResponse.json({ message: err.message || 'Server error' }, { status: 500 })
+  }
 }
 
 export async function PUT(req: NextRequest) {
   if (!auth(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  await connectDB()
-  const { _id, ...rest } = await req.json()
-  const doc = await AdminCourse.findByIdAndUpdate(_id, rest, { new: true })
-  return NextResponse.json(doc)
+  try {
+    await connectDB()
+    const { _id, ...rest } = await req.json()
+    const doc = await AdminCourse.findByIdAndUpdate(_id, rest, { new: true })
+    return NextResponse.json(doc)
+  } catch (err: any) {
+    if (err.code === 11000) {
+      return NextResponse.json({ message: 'A course with this slug already exists.' }, { status: 400 })
+    }
+    return NextResponse.json({ message: err.message || 'Server error' }, { status: 500 })
+  }
 }

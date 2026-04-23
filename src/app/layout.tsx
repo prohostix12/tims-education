@@ -3,6 +3,7 @@ import { Inter, Poppins } from 'next/font/google'
 import './globals.css'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
+import CourseFinderWidget from '@/components/CourseFinderWidget'
 import { Toaster } from 'react-hot-toast'
 
 const inter = Inter({
@@ -40,6 +41,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Navbar />
         <main>{children}</main>
         <Footer />
+        <CourseFinderWidget />
       </body>
     </html>
   )

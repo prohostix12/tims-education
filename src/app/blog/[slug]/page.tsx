@@ -35,41 +35,41 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
     <div className="pt-24">
 
       {/* ── Hero Banner ── */}
-      <section className="bg-hero-gradient min-h-[70vh] flex items-center px-4 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10"
-          style={{ backgroundImage: 'radial-gradient(circle, #ffffff 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
-        <div className="absolute bottom-0 right-0 w-72 h-72 bg-accent/10 rounded-full translate-x-20 translate-y-20 blur-3xl" />
+      <section className="bg-[#f7f7f5] min-h-[90vh] flex items-center px-4 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-50"
+          style={{ backgroundImage: 'radial-gradient(circle, #cbd5e1 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
+        <div className="absolute bottom-0 right-0 w-72 h-72 bg-primary-100 rounded-full translate-x-20 translate-y-20 blur-3xl" />
 
         <div className="relative max-w-4xl mx-auto">
           {/* Breadcrumb */}
-          <div className="flex items-center gap-2 text-white/60 text-sm mb-6">
-            <Link href="/" className="hover:text-accent transition-colors">Home</Link>
+          <div className="flex items-center gap-2 text-gray-500 text-sm mb-6">
+            <Link href="/" className="text-gray-500 hover:text-[#CC2229] transition-colors">Home</Link>
             <span>/</span>
-            <Link href="/blog" className="hover:text-accent transition-colors">Blog</Link>
+            <Link href="/blog" className="hover:text-[#CC2229] transition-colors">Blog</Link>
             <span>/</span>
-            <span className="text-accent line-clamp-1">{post.title}</span>
+            <span className="text-[#CC2229] line-clamp-1">{post.title}</span>
           </div>
 
           <div className="flex items-center gap-3 mb-5">
-            <span className={`text-xs font-bold px-3 py-1 rounded-full border ${categoryColor[post.category] || 'bg-white/10 text-white border-white/20'}`}>
+            <span className={`text-xs font-bold px-3 py-1 rounded-full border ${categoryColor[post.category] || 'bg-gray-100 text-gray-600 border-gray-200'}`}>
               {post.category}
             </span>
             {post.featured && (
-              <span className="text-xs font-semibold px-3 py-1 rounded-full bg-accent text-white">
+              <span className="text-xs font-semibold px-3 py-1 rounded-full bg-[#CC2229] text-white">
                 Featured
               </span>
             )}
           </div>
 
           <div className="text-6xl mb-4">{post.icon}</div>
-          <h1 className="text-3xl md:text-4xl font-bold text-white font-heading leading-snug mb-4">
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 font-heading leading-snug mb-4">
             {post.title}
           </h1>
-          <p className="text-white/70 text-lg mb-6 leading-relaxed">{post.excerpt}</p>
+          <p className="text-gray-600 text-lg mb-6 leading-relaxed">{post.excerpt}</p>
 
-          <div className="flex flex-wrap items-center gap-5 text-white/60 text-sm">
+          <div className="flex flex-wrap items-center gap-5 text-gray-500 text-sm">
             <span className="flex items-center gap-1.5">
-              <span className="w-7 h-7 rounded-full bg-accent flex items-center justify-center text-white text-xs font-bold">T</span>
+              <span className="w-7 h-7 rounded-full bg-[#CC2229] flex items-center justify-center text-white text-xs font-bold">T</span>
               {post.author}
             </span>
             <span className="flex items-center gap-1.5">
@@ -83,7 +83,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
         </div>
 
         <div className="absolute bottom-0 left-0 right-0">
-          <svg viewBox="0 0 1440 50" fill="none"><path d="M0,25 C360,50 1080,0 1440,25 L1440,50 L0,50 Z" fill="#f8fafc" /></svg>
+          <svg viewBox="0 0 1440 50" fill="none"><path d="M0,25 C360,50 1080,0 1440,25 L1440,50 L0,50 Z" fill="white" /></svg>
         </div>
       </section>
 
@@ -170,7 +170,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
                 <div className="relative flex flex-col md:flex-row items-center gap-6">
                   <div className="flex-1">
                     <h3 className="text-white font-bold font-heading text-xl mb-2">Ready to take the next step?</h3>
-                    <p className="text-white/70 text-sm">Talk to a TIMS counsellor — free, no pressure, personalised guidance for your goals.</p>
+                    <p className="text-gray-600 text-sm">Talk to a TIMS counsellor — free, no pressure, personalised guidance for your goals.</p>
                   </div>
                   <div className="flex gap-3 shrink-0">
                     <Link href="/contact"
@@ -178,7 +178,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
                       Get Free Guidance <FiArrowRight size={14} />
                     </Link>
                     <Link href="/courses"
-                      className="inline-flex items-center gap-2 px-6 py-3 bg-white/15 text-white font-semibold rounded-xl border border-white/30 hover:bg-white/25 transition-all text-sm">
+                      className="inline-flex items-center gap-2 px-6 py-3 bg-white text-gray-700 font-semibold rounded-xl border-2 border-gray-300 hover:bg-gray-50 transition-all text-sm">
                       Browse Courses
                     </Link>
                   </div>
@@ -241,7 +241,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
                   style={{ backgroundImage: 'radial-gradient(circle, #ffffff 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
                 <div className="relative">
                   <h4 className="font-bold text-white font-heading text-sm mb-1">Need Guidance?</h4>
-                  <p className="text-white/70 text-xs mb-4">Our counsellors are available Mon–Sat, 9 AM–6 PM.</p>
+                  <p className="text-gray-600 text-xs mb-4">Our counsellors are available Mon–Sat, 9 AM–6 PM.</p>
                   <Link href="/contact"
                     className="w-full flex items-center justify-center gap-2 py-2.5 bg-accent text-white font-bold text-sm rounded-xl hover:bg-accent-dark transition-all shadow-md">
                     Talk to a Counsellor <FiArrowRight size={13} />
@@ -265,7 +265,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
                 <div className="bg-hero-gradient p-5 relative overflow-hidden">
                   <div className="absolute top-0 right-0 w-20 h-20 bg-accent/10 rounded-full translate-x-6 -translate-y-6" />
                   <div className="relative">
-                    <span className={`text-xs font-bold px-2.5 py-1 rounded-lg border ${categoryColor[p.category] || 'bg-white/10 text-white border-white/20'}`}>
+                    <span className={`text-xs font-bold px-2.5 py-1 rounded-lg border ${categoryColor[p.category] || 'bg-white text-white border-gray-100'}`}>
                       {p.category}
                     </span>
                     <div className="text-3xl mt-3 mb-2">{p.icon}</div>

@@ -106,15 +106,15 @@ export default function AttestationPage() {
     <div className="pt-24">
 
       {/* ── Hero ── */}
-      <section className="bg-hero-gradient min-h-[70vh] flex items-center px-4 relative overflow-hidden">
+      <section className="bg-[#f7f7f5] min-h-[90vh] flex items-center px-4 relative overflow-hidden">
         <div className="absolute inset-0"
           style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.12) 1.5px, transparent 1.5px)', backgroundSize: '32px 32px' }} />
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-accent/15 rounded-full translate-x-32 -translate-y-32 blur-[100px]" />
         <div className="absolute bottom-0 left-0 w-72 h-72 bg-white/5 rounded-full -translate-x-20 translate-y-20 blur-3xl" />
 
         <div className="relative max-w-7xl mx-auto">
-          <div className="flex items-center gap-2 text-white/60 text-sm mb-6">
-            <Link href="/" className="hover:text-accent transition-colors">Home</Link>
+          <div className="flex items-center gap-2 text-gray-500 text-sm mb-6">
+            <Link href="/" className="text-gray-500 hover:text-[#CC2229] transition-colors">Home</Link>
             <span>/</span>
             <Link href="/services" className="hover:text-accent transition-colors">Services</Link>
             <span>/</span>
@@ -126,14 +126,14 @@ export default function AttestationPage() {
               <span className="inline-block px-4 py-1.5 bg-accent text-white text-xs font-bold rounded-full mb-4 uppercase tracking-wider">
                 Service
               </span>
-              <h1 className="text-4xl md:text-5xl font-bold text-white font-heading leading-tight mb-5">
+              <h1 className="text-4xl md:text-5xl font-bold text-gray-900 font-heading leading-tight mb-5">
                 Fast & Trusted<br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-red-300">
                   Certificate Attestation
                 </span><br />
                 Services for GCC
               </h1>
-              <p className="text-white/75 text-lg leading-relaxed mb-8">
+              <p className="text-gray-600 text-lg leading-relaxed mb-8">
                 Planning to work, study, or migrate abroad? TIMS handles complete attestation of your educational and non-educational documents — from notary to MEA to embassy stamp.
               </p>
               <div className="flex flex-wrap gap-3">
@@ -142,7 +142,7 @@ export default function AttestationPage() {
                   Get Started <FiArrowRight />
                 </Link>
                 <a href="tel:+919961967777"
-                  className="inline-flex items-center gap-2 px-7 py-3.5 bg-white/15 text-white font-semibold rounded-xl border border-white/30 hover:bg-white/25 transition-all">
+                  className="inline-flex items-center gap-2 px-7 py-3.5 bg-white text-gray-700 font-semibold rounded-xl border-2 border-gray-300 hover:bg-gray-50 transition-all">
                   <FiPhone size={15} /> Call Now
                 </a>
               </div>
@@ -150,21 +150,21 @@ export default function AttestationPage() {
 
             {/* Right — country chips */}
             <div className="hidden lg:block">
-              <div className="bg-white/10 backdrop-blur-md rounded-3xl p-8 border border-white/20">
-                <p className="text-white/60 text-sm font-semibold uppercase tracking-wider mb-5">GCC Countries We Serve</p>
+              <div className="bg-white backdrop-blur-md rounded-3xl p-8 border border-gray-100">
+                <p className="text-gray-500 text-sm font-semibold uppercase tracking-wider mb-5">GCC Countries We Serve</p>
                 <div className="grid grid-cols-2 gap-3">
                   {countries.map((c) => (
-                    <div key={c.name} className="flex items-center gap-3 bg-white/10 rounded-xl px-4 py-3 border border-white/15">
+                    <div key={c.name} className="flex items-center gap-3 bg-white rounded-xl px-4 py-3 border border-white/15">
                       <span className="text-2xl">{c.flag}</span>
                       <div>
                         <p className="text-white font-semibold text-sm">{c.short}</p>
-                        <p className="text-white/50 text-xs">{c.name}</p>
+                        <p className="text-gray-400 text-xs">{c.name}</p>
                       </div>
                     </div>
                   ))}
                 </div>
-                <div className="mt-4 bg-white/10 rounded-xl px-4 py-3 border border-white/15 text-center">
-                  <p className="text-white/60 text-xs">+ Other countries on request</p>
+                <div className="mt-4 bg-white rounded-xl px-4 py-3 border border-white/15 text-center">
+                  <p className="text-gray-500 text-xs">+ Other countries on request</p>
                 </div>
               </div>
             </div>
@@ -172,7 +172,7 @@ export default function AttestationPage() {
         </div>
 
         <div className="absolute bottom-0 left-0 right-0">
-          <svg viewBox="0 0 1440 50" fill="none"><path d="M0,25 C360,50 1080,0 1440,25 L1440,50 L0,50 Z" fill="#f8fafc" /></svg>
+          <svg viewBox="0 0 1440 50" fill="none"><path d="M0,25 C360,50 1080,0 1440,25 L1440,50 L0,50 Z" fill="white" /></svg>
         </div>
       </section>
 
@@ -294,19 +294,20 @@ export default function AttestationPage() {
       {/* ── CTA + Contact ── */}
       <section className="bg-gray-50 py-14 px-4">
         <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="md:col-span-2 bg-hero-gradient rounded-3xl p-8 relative overflow-hidden">
+          <div className="md:col-span-2 rounded-3xl p-8 relative overflow-hidden"
+            style={{ background: 'linear-gradient(135deg, #CC2229 0%, #2B3488 100%)' }}>
             <div className="absolute inset-0 opacity-10"
-              style={{ backgroundImage: 'radial-gradient(circle, #ffffff 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
+              style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
             <div className="relative">
               <h2 className="text-2xl font-bold text-white font-heading mb-2">Ready to start your attestation?</h2>
-              <p className="text-white/70 text-sm mb-5">Contact our team for a free document assessment and a clear timeline before you submit anything.</p>
+              <p className="text-white/80 text-sm mb-5">Contact our team for a free document assessment and a clear timeline before you submit anything.</p>
               <div className="flex flex-wrap gap-3">
                 <Link href="/contact"
                   className="inline-flex items-center gap-2 px-6 py-3 bg-accent text-white font-bold rounded-xl hover:bg-accent-dark transition-all shadow-md text-sm">
                   Enquire Now <FiArrowRight />
                 </Link>
                 <a href="tel:+919961967777"
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-white/15 text-white font-semibold rounded-xl border border-white/30 hover:bg-white/25 transition-all text-sm">
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-white text-gray-700 font-semibold rounded-xl border-2 border-gray-300 hover:bg-gray-50 transition-all text-sm">
                   <FiPhone size={13} /> +91 9961 9677 77
                 </a>
               </div>

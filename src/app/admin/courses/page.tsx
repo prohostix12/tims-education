@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { FiPlus, FiEdit2, FiX, FiSave, FiSearch, FiCheck, FiChevronDown } from 'react-icons/fi'
+import { FiPlus, FiEdit2, FiX, FiSave, FiSearch, FiCheck, FiChevronDown, FiRefreshCw, FiExternalLink } from 'react-icons/fi'
 
 const COURSE_CATEGORIES = [
   { value: 'School Programs',   label: '📚 School Programs (SSLC / Plus Two)' },
@@ -28,7 +28,8 @@ interface Course {
   feeRange: string
   careers: string
   highlights: string
-  universities: string[]   // slugs
+  universities: string[]
+  syllabusUrl: string
 }
 
 interface UniOption {
@@ -42,18 +43,21 @@ interface UniOption {
 const empty: Course = {
   slug: '', title: '', category: '', description: '', fullDescription: '',
   duration: '', mode: 'Online', eligibility: '', popular: false,
-  icon: '📚', badge: '', feeRange: '', careers: '', highlights: '', universities: [],
+  icon: '📚', badge: '', feeRange: '', careers: '', highlights: '',
+  universities: [], syllabusUrl: '',
 }
 
 export default function AdminCourses() {
-  const [list, setList] = useState<Course[]>([])
+  const [list, setList]           = useState<Course[]>([])
   const [uniOptions, setUniOptions] = useState<UniOption[]>([])
-  const [loading, setLoading] = useState(true)
-  const [search, setSearch] = useState('')
-  const [modal, setModal] = useState(false)
-  const [editing, setEditing] = useState<Course>(empty)
-  const [saving, setSaving] = useState(false)
-  const [msg, setMsg] = useState('')
+  const [loading, setLoading]     = useState(true)
+  const [search, setSearch]       = useState('')
+  const [modal, setModal]         = useState(false)
+  const [editing, setEditing]     = useState<Course>(empty)
+  const [saving, setSaving]       = useState(false)
+  const [seeding, setSeeding]     = useState(false)
+  const [msg, setMsg]             = useState('')
+  const [seedMsg, setSeedMsg]     = useState('')
 
   const load = () => {
     fetch('/api/admin/courses')
@@ -76,13 +80,14 @@ export default function AdminCourses() {
     if (params.get('new') === '1') openNew()
   }, [])
 
-  const openNew = () => { setEditing(empty); setModal(true); setMsg('') }
+  const openNew  = () => { setEditing(empty); setModal(true); setMsg('') }
   const openEdit = (c: Course) => {
     setEditing({
       ...c,
-      careers:      (c.careers as unknown as string[])?.join(', ') ?? '',
-      highlights:   (c.highlights as unknown as string[])?.join(', ') ?? '',
+      careers:    (c.careers as unknown as string[])?.join(', ') ?? '',
+      highlights: (c.highlights as unknown as string[])?.join(', ') ?? '',
       universities: Array.isArray(c.universities) ? c.universities : [],
+      syllabusUrl: c.syllabusUrl ?? '',
     })
     setModal(true)
     setMsg('')
@@ -104,7 +109,6 @@ export default function AdminCourses() {
       ...editing,
       careers:    editing.careers.split(',').map((s) => s.trim()).filter(Boolean),
       highlights: editing.highlights.split(',').map((s) => s.trim()).filter(Boolean),
-      // universities already an array of slugs
     }
     const res = await fetch('/api/admin/courses', {
       method: editing._id ? 'PUT' : 'POST',
@@ -122,6 +126,21 @@ export default function AdminCourses() {
     setSaving(false)
   }
 
+  const handleSeed = async () => {
+    setSeeding(true)
+    setSeedMsg('')
+    const res = await fetch('/api/admin/seed-courses', { method: 'POST' })
+    const data = await res.json()
+    if (data.success) {
+      setSeedMsg(`✅ Seeded: ${data.inserted} inserted, ${data.updated} updated`)
+      load()
+    } else {
+      setSeedMsg('❌ Seed failed')
+    }
+    setSeeding(false)
+    setTimeout(() => setSeedMsg(''), 4000)
+  }
+
   const filtered = list.filter((c) =>
     c.title?.toLowerCase().includes(search.toLowerCase()) ||
     c.category?.toLowerCase().includes(search.toLowerCase())
@@ -136,13 +155,21 @@ export default function AdminCourses() {
     <div className="space-y-5">
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-xl font-bold text-gray-800 font-heading">Courses</h1>
+          <h1 className="text-xl font-bold text-gray-800 font-heading">Courses / Programs</h1>
           <p className="text-gray-500 text-sm">{list.length} courses in database</p>
         </div>
-        <button onClick={openNew}
-          className="flex items-center gap-2 px-4 py-2.5 bg-primary-600 text-white text-sm font-semibold rounded-xl hover:bg-primary-700 transition-all shadow-sm">
-          <FiPlus size={16} /> Add Course
-        </button>
+        <div className="flex items-center gap-2 flex-wrap">
+          {seedMsg && <span className="text-xs font-medium text-green-700 bg-green-50 px-3 py-1.5 rounded-lg border border-green-100">{seedMsg}</span>}
+          <button onClick={handleSeed} disabled={seeding}
+            className="flex items-center gap-2 px-4 py-2.5 bg-green-600 text-white text-sm font-semibold rounded-xl hover:bg-green-700 transition-all shadow-sm disabled:opacity-70">
+            <FiRefreshCw size={14} className={seeding ? 'animate-spin' : ''} />
+            {seeding ? 'Seeding...' : 'Sync All Courses to DB'}
+          </button>
+          <button onClick={openNew}
+            className="flex items-center gap-2 px-4 py-2.5 bg-primary-600 text-white text-sm font-semibold rounded-xl hover:bg-primary-700 transition-all shadow-sm">
+            <FiPlus size={16} /> Add Course
+          </button>
+        </div>
       </div>
 
       <div className="relative">
@@ -157,18 +184,21 @@ export default function AdminCourses() {
           <div className="p-8 text-center text-gray-400 text-sm">Loading...</div>
         ) : filtered.length === 0 ? (
           <div className="p-8 text-center text-gray-400 text-sm">
-            {list.length === 0 ? 'No courses added yet. Click "Add Course" to get started.' : 'No results found.'}
+            {list.length === 0
+              ? 'No courses yet. Click "Sync All Courses to DB" to import all programs.'
+              : 'No results found.'}
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead className="bg-gray-50 border-b border-gray-100">
                 <tr>
-                  <th className="text-left px-5 py-3 font-semibold text-gray-600">Course</th>
-                  <th className="text-left px-5 py-3 font-semibold text-gray-600">Category</th>
-                  <th className="text-left px-5 py-3 font-semibold text-gray-600">Duration</th>
-                  <th className="text-left px-5 py-3 font-semibold text-gray-600">Universities</th>
-                  <th className="text-left px-5 py-3 font-semibold text-gray-600">Actions</th>
+                  <th className="text-left px-5 py-3 font-semibold text-gray-600 whitespace-nowrap">Course</th>
+                  <th className="text-left px-5 py-3 font-semibold text-gray-600 whitespace-nowrap">Category</th>
+                  <th className="text-left px-5 py-3 font-semibold text-gray-600 whitespace-nowrap">Duration</th>
+                  <th className="text-left px-5 py-3 font-semibold text-gray-600 whitespace-nowrap">Universities</th>
+                  <th className="text-left px-5 py-3 font-semibold text-gray-600 whitespace-nowrap">Syllabus</th>
+                  <th className="text-left px-5 py-3 font-semibold text-gray-600 whitespace-nowrap">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
@@ -185,9 +215,19 @@ export default function AdminCourses() {
                         </span>
                       )}
                     </td>
-                    <td className="px-5 py-3.5 text-gray-500">{c.duration}</td>
+                    <td className="px-5 py-3.5 text-gray-500 whitespace-nowrap">{c.duration}</td>
                     <td className="px-5 py-3.5">
                       <span className="text-xs text-gray-500">{getUniNames(c.universities)}</span>
+                    </td>
+                    <td className="px-5 py-3.5">
+                      {c.syllabusUrl ? (
+                        <a href={c.syllabusUrl} target="_blank" rel="noreferrer"
+                          className="inline-flex items-center gap-1 text-xs text-primary-600 hover:text-accent font-medium">
+                          <FiExternalLink size={11} /> View
+                        </a>
+                      ) : (
+                        <span className="text-xs text-gray-300">—</span>
+                      )}
                     </td>
                     <td className="px-5 py-3.5">
                       <button onClick={() => openEdit(c)}
@@ -224,7 +264,6 @@ export default function AdminCourses() {
                 <F label="Slug *" v={editing.slug} set={(v) => setEditing((p) => ({ ...p, slug: v }))} placeholder="e.g. bba-online" />
               </div>
               <div className="grid grid-cols-2 gap-4">
-                {/* Category dropdown */}
                 <div>
                   <label className="block text-xs font-medium text-gray-600 mb-1">Category *</label>
                   <div className="relative">
@@ -251,6 +290,7 @@ export default function AdminCourses() {
                 <F label="Badge" v={editing.badge} set={(v) => setEditing((p) => ({ ...p, badge: v }))} placeholder="e.g. Most Popular" />
               </div>
               <F label="Eligibility" v={editing.eligibility} set={(v) => setEditing((p) => ({ ...p, eligibility: v }))} />
+              <F label="Syllabus URL (PDF or link)" v={editing.syllabusUrl} set={(v) => setEditing((p) => ({ ...p, syllabusUrl: v }))} placeholder="https://..." />
               <TA label="Short Description" v={editing.description} set={(v) => setEditing((p) => ({ ...p, description: v }))} />
               <TA label="Full Description" v={editing.fullDescription} set={(v) => setEditing((p) => ({ ...p, fullDescription: v }))} rows={4} />
               <F label="Career Options (comma-separated)" v={editing.careers} set={(v) => setEditing((p) => ({ ...p, careers: v }))} />
@@ -264,7 +304,7 @@ export default function AdminCourses() {
                 </label>
                 {uniOptions.length === 0 ? (
                   <div className="p-4 bg-amber-50 border border-amber-100 rounded-xl text-xs text-amber-700">
-                    No universities in database yet. Add universities first, then assign them to courses.
+                    No universities in database yet. Add universities first.
                   </div>
                 ) : (
                   <div className="border border-gray-200 rounded-xl divide-y divide-gray-50 max-h-52 overflow-y-auto">
@@ -273,11 +313,9 @@ export default function AdminCourses() {
                       return (
                         <button key={u.slug} type="button" onClick={() => toggleUni(u.slug)}
                           className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors ${selected ? 'bg-primary-50' : 'hover:bg-gray-50'}`}>
-                          {/* Checkbox */}
                           <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 transition-colors ${selected ? 'bg-primary-600 border-primary-600' : 'border-gray-300'}`}>
                             {selected && <FiCheck size={11} className="text-white" />}
                           </div>
-                          {/* Logo */}
                           {u.logo ? (
                             <img src={u.logo} alt={u.shortName} className="w-7 h-7 rounded-lg object-contain border border-gray-100 bg-white shrink-0" />
                           ) : (

@@ -16,6 +16,7 @@ export interface IAdminCourse extends Document {
   careers: string[]
   highlights: string[]
   universities: string[]
+  syllabusUrl: string
   createdAt: Date
   updatedAt: Date
 }
@@ -36,6 +37,7 @@ const AdminCourseSchema = new Schema<IAdminCourse>({
   careers:         [String],
   highlights:      [String],
   universities:    [String],
+  syllabusUrl:     { type: String, default: '' },
 }, { timestamps: true })
 
 export default mongoose.models.AdminCourse || mongoose.model<IAdminCourse>('AdminCourse', AdminCourseSchema)

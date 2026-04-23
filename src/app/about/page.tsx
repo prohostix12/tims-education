@@ -93,37 +93,37 @@ export default function AboutPage() {
     <div className="pt-24">
 
       {/* ── Hero Banner ── */}
-      <section className="bg-hero-gradient min-h-[70vh] flex items-center px-4 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10"
-          style={{ backgroundImage: 'radial-gradient(circle, #ffffff 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
-        <div className="absolute top-0 right-0 w-96 h-96 bg-accent/10 rounded-full translate-x-32 -translate-y-32 blur-3xl" />
+      <section className="bg-[#f7f7f5] min-h-[90vh] flex items-center px-4 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-50"
+          style={{ backgroundImage: 'radial-gradient(circle, #cbd5e1 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-primary-100 rounded-full translate-x-32 -translate-y-32 blur-3xl" />
         <div className="absolute bottom-0 left-0 w-72 h-72 bg-white/5 rounded-full -translate-x-20 translate-y-20 blur-3xl" />
         <div className="relative max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
           <div>
             <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-3">Who We Are</p>
-            <h1 className="text-4xl md:text-5xl font-bold text-white font-heading leading-tight mb-5">
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 font-heading leading-tight mb-5">
               Empowering Kerala's<br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-red-300">
                 Next Generation
               </span>
             </h1>
-            <p className="text-white/80 text-lg leading-relaxed mb-6">
+            <p className="text-gray-600 text-lg leading-relaxed mb-6">
               Since 2009, TIMS has helped thousands of students across Kerala complete their education — affordably, flexibly, and with full recognition. We don't just enrol you; we walk with you every step of the way.
             </p>
             <div className="flex flex-wrap gap-3 mb-8">
               {['Founded 2009', 'Tirur & Edappal', 'UGC-DEB Approved', '10,000+ Alumni'].map((b) => (
-                <span key={b} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/15 text-white text-xs font-medium rounded-lg border border-white/25">
+                <span key={b} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white text-gray-700 text-xs font-semibold rounded-xl border border-gray-200 shadow-sm">
                   <FiCheckCircle className="text-accent" size={12} /> {b}
                 </span>
               ))}
             </div>
             <div className="flex flex-wrap gap-3">
               <Link href="/courses"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-accent text-white font-bold rounded-xl hover:bg-accent-dark transition-all shadow-lg">
+                className="inline-flex items-center gap-2 px-6 py-3 bg-[#CC2229] text-white font-bold rounded-xl hover:bg-red-700 transition-all shadow-lg">
                 Explore Programs <FiArrowRight />
               </Link>
               <Link href="/contact"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-white/15 text-white font-semibold rounded-xl border border-white/30 hover:bg-white/25 transition-all">
+                className="inline-flex items-center gap-2 px-6 py-3 bg-white text-[#2B3488] font-semibold rounded-xl border-2 border-[#2B3488] hover:bg-[#2B3488] hover:text-white transition-all">
                 Talk to Us
               </Link>
             </div>
@@ -132,16 +132,16 @@ export default function AboutPage() {
           {/* Stats grid */}
           <div className="grid grid-cols-2 gap-4">
             {achievements.map((a) => (
-              <div key={a.label} className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20 text-center hover:bg-white/15 transition-all">
+              <div key={a.label} className="bg-white rounded-2xl p-6 border border-gray-100 shadow-md text-center hover:shadow-lg transition-all">
                 <div className={`flex justify-center mb-3 ${a.color}`}>{a.icon}</div>
-                <p className="text-3xl font-bold text-white font-heading mb-1">{a.value}</p>
-                <p className="text-white/65 text-sm">{a.label}</p>
+                <p className="text-3xl font-bold text-gray-900 font-heading mb-1">{a.value}</p>
+                <p className="text-gray-500 text-sm">{a.label}</p>
               </div>
             ))}
           </div>
         </div>
         <div className="absolute bottom-0 left-0 right-0">
-          <svg viewBox="0 0 1440 50" fill="none"><path d="M0,25 C360,50 1080,0 1440,25 L1440,50 L0,50 Z" fill="#f8fafc" /></svg>
+          <svg viewBox="0 0 1440 50" fill="none"><path d="M0,25 C360,50 1080,0 1440,25 L1440,50 L0,50 Z" fill="white" /></svg>
         </div>
       </section>
 
@@ -335,25 +335,25 @@ export default function AboutPage() {
                 <ul className="space-y-3">
                   <li className="flex items-start gap-3">
                     <FiMapPin className={`mt-0.5 shrink-0 ${i === 0 ? 'text-accent' : 'text-primary-600'}`} size={16} />
-                    <span className={`text-sm ${i === 0 ? 'text-white/80' : 'text-gray-600'}`}>{office.address}</span>
+                    <span className={`text-sm ${i === 0 ? 'text-gray-600' : 'text-gray-600'}`}>{office.address}</span>
                   </li>
                   <li>
                     <a href={`tel:${office.phone.replace(/\s/g, '')}`}
-                      className={`flex items-center gap-3 text-sm hover:underline ${i === 0 ? 'text-white/80 hover:text-white' : 'text-gray-600 hover:text-primary-600'}`}>
+                      className={`flex items-center gap-3 text-sm hover:underline ${i === 0 ? 'text-gray-600 hover:text-white' : 'text-gray-600 hover:text-primary-600'}`}>
                       <FiPhone className={`shrink-0 ${i === 0 ? 'text-accent' : 'text-primary-600'}`} size={16} />
                       {office.phone}
                     </a>
                   </li>
                   <li>
                     <a href={`mailto:${office.email}`}
-                      className={`flex items-center gap-3 text-sm hover:underline ${i === 0 ? 'text-white/80 hover:text-white' : 'text-gray-600 hover:text-primary-600'}`}>
+                      className={`flex items-center gap-3 text-sm hover:underline ${i === 0 ? 'text-gray-600 hover:text-white' : 'text-gray-600 hover:text-primary-600'}`}>
                       <FiMail className={`shrink-0 ${i === 0 ? 'text-accent' : 'text-primary-600'}`} size={16} />
                       {office.email}
                     </a>
                   </li>
                   <li className="flex items-center gap-3">
                     <span className={`text-lg`}>🕐</span>
-                    <span className={`text-sm ${i === 0 ? 'text-white/70' : 'text-gray-500'}`}>{office.hours}</span>
+                    <span className={`text-sm ${i === 0 ? 'text-gray-600' : 'text-gray-500'}`}>{office.hours}</span>
                   </li>
                 </ul>
               </div>
@@ -364,16 +364,17 @@ export default function AboutPage() {
 
       {/* ── Final CTA ── */}
       <section className="bg-gray-50 py-16 px-4">
-        <div className="max-w-4xl mx-auto bg-hero-gradient rounded-3xl p-12 text-center relative overflow-hidden">
+        <div className="max-w-4xl mx-auto rounded-3xl p-12 text-center relative overflow-hidden"
+          style={{ background: 'linear-gradient(135deg, #CC2229 0%, #2B3488 100%)' }}>
           <div className="absolute inset-0 opacity-10"
-            style={{ backgroundImage: 'radial-gradient(circle, #ffffff 1px, transparent 1px)', backgroundSize: '25px 25px' }} />
-          <div className="absolute top-0 right-0 w-56 h-56 bg-accent/10 rounded-full translate-x-20 -translate-y-20 blur-2xl" />
+            style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '25px 25px' }} />
+          <div className="absolute top-0 right-0 w-56 h-56 rounded-full translate-x-20 -translate-y-20 blur-2xl opacity-20" style={{ background: '#fff' }} />
           <div className="relative">
-            <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-3">Start Today</p>
+            <p className="text-white/70 font-semibold text-sm uppercase tracking-widest mb-3">Start Today</p>
             <h2 className="text-3xl md:text-4xl font-bold text-white font-heading mb-4">
               Ready to Begin Your<br />Learning Journey?
             </h2>
-            <p className="text-white/75 max-w-lg mx-auto mb-8 text-base">
+            <p className="text-white/80 max-w-lg mx-auto mb-8 text-base">
               Join over 10,000 students who trusted TIMS to guide them. Get a free counselling session — no commitment, no pressure.
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
@@ -382,7 +383,7 @@ export default function AboutPage() {
                 Explore Programs <FiArrowRight />
               </Link>
               <Link href="/contact"
-                className="inline-flex items-center gap-2 px-7 py-3.5 bg-white text-primary-700 font-bold rounded-xl hover:bg-gray-50 transition-all shadow-lg hover:scale-105">
+                className="inline-flex items-center gap-2 px-7 py-3.5 bg-white/20 text-white font-bold rounded-xl border-2 border-white/40 hover:bg-white/30 transition-all shadow-lg hover:scale-105">
                 Book Free Counselling
               </Link>
             </div>

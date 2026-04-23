@@ -31,14 +31,14 @@ export default function BlogPage() {
     <div className="pt-24">
 
       {/* ── Hero ── */}
-      <section className="bg-hero-gradient min-h-[70vh] flex items-center px-4 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10"
-          style={{ backgroundImage: 'radial-gradient(circle, #ffffff 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
-        <div className="absolute top-0 right-0 w-72 h-72 bg-accent/10 rounded-full translate-x-24 -translate-y-24 blur-3xl" />
+      <section className="bg-[#f7f7f5] min-h-[90vh] flex items-center px-4 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-50"
+          style={{ backgroundImage: 'radial-gradient(circle, #cbd5e1 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
+        <div className="absolute top-0 right-0 w-72 h-72 bg-primary-100 rounded-full translate-x-24 -translate-y-24 blur-3xl" />
         <div className="relative max-w-7xl mx-auto text-center">
           <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-3">Knowledge Hub</p>
-          <h1 className="text-4xl md:text-5xl font-bold text-white font-heading mb-4">Blog & Articles</h1>
-          <p className="text-white/75 text-lg max-w-2xl mx-auto mb-8">
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 font-heading mb-4">Blog & Articles</h1>
+          <p className="text-gray-600 text-lg max-w-2xl mx-auto mb-8">
             Expert insights on online education, career growth, university choices, and student success — written by the TIMS team.
           </p>
 
@@ -51,14 +51,14 @@ export default function BlogPage() {
           </div>
 
           {/* Breadcrumb */}
-          <div className="flex items-center justify-center gap-2 mt-5 text-white/60 text-sm">
-            <Link href="/" className="hover:text-accent transition-colors">Home</Link>
+          <div className="flex items-center justify-center gap-2 mt-5 text-gray-500 text-sm">
+            <Link href="/" className="text-gray-500 hover:text-[#CC2229] transition-colors">Home</Link>
             <span>/</span>
             <span className="text-accent">Blog</span>
           </div>
         </div>
         <div className="absolute bottom-0 left-0 right-0">
-          <svg viewBox="0 0 1440 50" fill="none"><path d="M0,25 C360,50 1080,0 1440,25 L1440,50 L0,50 Z" fill="#f8fafc" /></svg>
+          <svg viewBox="0 0 1440 50" fill="none"><path d="M0,25 C360,50 1080,0 1440,25 L1440,50 L0,50 Z" fill="white" /></svg>
         </div>
       </section>
 
@@ -95,8 +95,8 @@ export default function BlogPage() {
                   <div className="grid md:grid-cols-5 gap-0">
                     {/* Left — visual */}
                     <div className="md:col-span-2 bg-hero-gradient p-10 flex flex-col justify-between relative overflow-hidden min-h-[260px]">
-                      <div className="absolute inset-0 opacity-10"
-                        style={{ backgroundImage: 'radial-gradient(circle, #ffffff 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
+                      <div className="absolute inset-0 opacity-50"
+                        style={{ backgroundImage: 'radial-gradient(circle, #cbd5e1 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
                       <div className="absolute bottom-0 right-0 w-40 h-40 bg-accent/20 rounded-full translate-x-12 translate-y-12 blur-2xl" />
                       <div className="relative">
                         <span className="inline-block px-3 py-1 bg-accent text-white text-xs font-bold rounded-full mb-4">Featured</span>
@@ -250,12 +250,12 @@ export default function BlogPage() {
 
               {/* CTA box */}
               <div className="bg-hero-gradient rounded-2xl p-6 relative overflow-hidden">
-                <div className="absolute inset-0 opacity-10"
-                  style={{ backgroundImage: 'radial-gradient(circle, #ffffff 1px, transparent 1px)', backgroundSize: '18px 18px' }} />
+                <div className="absolute inset-0 opacity-50"
+                  style={{ backgroundImage: 'radial-gradient(circle, #cbd5e1 1px, transparent 1px)', backgroundSize: '18px 18px' }} />
                 <div className="relative">
                   <p className="text-accent font-bold text-sm mb-2">Free Counselling</p>
                   <h3 className="text-white font-bold font-heading text-base mb-3">Need guidance on the right program?</h3>
-                  <p className="text-white/70 text-xs mb-4 leading-relaxed">Talk to a TIMS counsellor for free. No pressure, no commitment.</p>
+                  <p className="text-gray-600 text-xs mb-4 leading-relaxed">Talk to a TIMS counsellor for free. No pressure, no commitment.</p>
                   <Link href="/contact"
                     className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-accent text-white font-bold rounded-xl hover:bg-accent-dark transition-all text-sm w-full justify-center">
                     Talk to Us <FiArrowRight size={14} />
@@ -283,22 +283,23 @@ export default function BlogPage() {
 
       {/* ── Newsletter ── */}
       <section className="bg-white py-14 px-4">
-        <div className="max-w-2xl mx-auto bg-hero-gradient rounded-3xl p-10 text-center relative overflow-hidden">
+        <div className="max-w-2xl mx-auto rounded-3xl p-10 text-center relative overflow-hidden"
+          style={{ background: 'linear-gradient(135deg, #CC2229 0%, #2B3488 100%)' }}>
           <div className="absolute inset-0 opacity-10"
-            style={{ backgroundImage: 'radial-gradient(circle, #ffffff 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
+            style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
           <div className="relative">
-            <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-2">Stay Informed</p>
+            <p className="text-white/70 font-semibold text-sm uppercase tracking-widest mb-2">Stay Informed</p>
             <h2 className="text-2xl md:text-3xl font-bold text-white font-heading mb-2">Subscribe to Our Newsletter</h2>
-            <p className="text-white/70 mb-6 text-sm">Admission alerts, education news, and career tips — delivered weekly.</p>
+            <p className="text-white/80 mb-6 text-sm">Admission alerts, education news, and career tips — delivered weekly.</p>
             <form className="flex gap-3 max-w-sm mx-auto" onSubmit={(e) => e.preventDefault()}>
               <input type="email" placeholder="your@email.com"
-                className="flex-1 px-4 py-3 rounded-xl text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-accent" />
+                className="flex-1 px-4 py-3 rounded-xl text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-white/50" />
               <button type="submit"
-                className="px-5 py-3 bg-accent text-white font-bold rounded-xl hover:bg-accent-dark transition-all text-sm shrink-0">
+                className="px-5 py-3 bg-white text-[#CC2229] font-bold rounded-xl hover:bg-gray-100 transition-all text-sm shrink-0">
                 Subscribe
               </button>
             </form>
-            <p className="text-white/40 text-xs mt-3">No spam. Unsubscribe anytime.</p>
+            <p className="text-white/50 text-xs mt-3">No spam. Unsubscribe anytime.</p>
           </div>
         </div>
       </section>

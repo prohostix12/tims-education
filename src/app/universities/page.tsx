@@ -59,19 +59,19 @@ export default function UniversitiesPage() {
     <div className="pt-24">
 
       {/* ── Hero ── */}
-      <section className="bg-hero-gradient min-h-[70vh] flex items-center px-4 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10"
-          style={{ backgroundImage: 'radial-gradient(circle, #ffffff 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
-        <div className="absolute top-0 right-0 w-80 h-80 bg-accent/10 rounded-full translate-x-28 -translate-y-28 blur-3xl" />
+      <section className="bg-[#f7f7f5] min-h-[90vh] flex items-center px-4 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-50"
+          style={{ backgroundImage: 'radial-gradient(circle, #cbd5e1 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
+        <div className="absolute top-0 right-0 w-80 h-80 bg-primary-100 rounded-full translate-x-28 -translate-y-28 blur-3xl" />
         <div className="relative max-w-7xl mx-auto">
           <div className="flex flex-col items-center text-center mb-10">
             <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-3">Our Network</p>
-            <h1 className="text-4xl md:text-5xl font-bold text-white font-heading mb-4">Partner Universities</h1>
-            <p className="text-white/75 text-lg max-w-2xl">
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 font-heading mb-4">Partner Universities</h1>
+            <p className="text-gray-600 text-lg max-w-2xl">
               Every university in our network is UGC-DEB approved and NAAC accredited — so your degree is recognised everywhere.
             </p>
-            <div className="flex items-center gap-2 mt-4 text-white/60 text-sm">
-              <Link href="/" className="hover:text-accent transition-colors">Home</Link>
+            <div className="flex items-center gap-2 mt-4 text-gray-500 text-sm">
+              <Link href="/" className="text-gray-500 hover:text-[#CC2229] transition-colors">Home</Link>
               <span>/</span>
               <span className="text-accent">Universities</span>
             </div>
@@ -85,15 +85,15 @@ export default function UniversitiesPage() {
               { v: '200+', l: 'Programs' },
               { v: '100%', l: 'UGC Approved' },
             ].map((s) => (
-              <div key={s.l} className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 text-center border border-white/15">
-                <p className="text-2xl font-bold text-white font-heading">{s.v}</p>
-                <p className="text-white/65 text-xs mt-0.5">{s.l}</p>
+              <div key={s.l} className="bg-white  rounded-2xl p-4 text-center border border-white/15">
+                <p className="text-2xl font-bold text-gray-900 font-heading">{s.v}</p>
+                <p className="text-gray-500 text-xs mt-0.5">{s.l}</p>
               </div>
             ))}
           </div>
         </div>
         <div className="absolute bottom-0 left-0 right-0">
-          <svg viewBox="0 0 1440 50" fill="none"><path d="M0,25 C360,50 1080,0 1440,25 L1440,50 L0,50 Z" fill="#f8fafc" /></svg>
+          <svg viewBox="0 0 1440 50" fill="none"><path d="M0,25 C360,50 1080,0 1440,25 L1440,50 L0,50 Z" fill="white" /></svg>
         </div>
       </section>
 
@@ -141,10 +141,10 @@ export default function UniversitiesPage() {
 
                     {/* Card header */}
                     <div className="bg-hero-gradient p-6 relative overflow-hidden">
-                      <div className="absolute top-0 right-0 w-28 h-28 bg-accent/10 rounded-full translate-x-8 -translate-y-8" />
+                      <div className="absolute top-0 right-0 w-28 h-28 bg-primary-100 rounded-full translate-x-8 -translate-y-8" />
                       <div className="absolute bottom-0 left-0 w-20 h-20 bg-white/5 rounded-full -translate-x-4 translate-y-4" />
                       <div className="relative flex items-start justify-between">
-                        <div className="w-14 h-14 rounded-2xl bg-white/15 border border-white/25 flex items-center justify-center overflow-hidden">
+                        <div className="w-14 h-14 rounded-2xl bg-gray-100 border border-gray-200 flex items-center justify-center overflow-hidden">
                           {u.logo && !u.logo.startsWith('/universities/')
                             ? <img src={u.logo} alt={u.shortName} className="w-full h-full object-contain p-1" />
                             : <span className="text-white font-extrabold text-2xl font-heading">{u.shortName?.charAt(0)}</span>
@@ -157,7 +157,7 @@ export default function UniversitiesPage() {
                         )}
                       </div>
                       <div className="relative mt-4">
-                        <p className="text-white/60 text-xs font-medium mb-0.5">{u.shortName}</p>
+                        <p className="text-gray-500 text-xs font-medium mb-0.5">{u.shortName}</p>
                         <h3 className="text-white font-bold font-heading text-base leading-snug">{u.name}</h3>
                       </div>
                     </div>
@@ -206,19 +206,20 @@ export default function UniversitiesPage() {
 
       {/* ── CTA ── */}
       <section className="bg-white py-14 px-4">
-        <div className="max-w-3xl mx-auto bg-hero-gradient rounded-3xl p-12 text-center relative overflow-hidden">
+        <div className="max-w-3xl mx-auto rounded-3xl p-12 text-center relative overflow-hidden"
+          style={{ background: 'linear-gradient(135deg, #CC2229 0%, #2B3488 100%)' }}>
           <div className="absolute inset-0 opacity-10"
-            style={{ backgroundImage: 'radial-gradient(circle, #ffffff 1px, transparent 1px)', backgroundSize: '25px 25px' }} />
+            style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '25px 25px' }} />
           <div className="relative">
             <h2 className="text-2xl md:text-3xl font-bold text-white font-heading mb-3">Not sure which university suits you?</h2>
-            <p className="text-white/75 mb-6">Get a personalised recommendation based on your eligibility, budget and goals — completely free.</p>
+            <p className="text-white/80 mb-6">Get a personalised recommendation based on your eligibility, budget and goals — completely free.</p>
             <div className="flex flex-wrap gap-3 justify-center">
               <Link href="/contact"
                 className="inline-flex items-center gap-2 px-7 py-3.5 bg-accent text-white font-bold rounded-xl hover:bg-accent-dark transition-all shadow-lg">
                 Get Free Guidance <FiArrowRight />
               </Link>
               <Link href="/courses"
-                className="inline-flex items-center gap-2 px-7 py-3.5 bg-white/15 text-white font-semibold rounded-xl border border-white/30 hover:bg-white/25 transition-all">
+                className="inline-flex items-center gap-2 px-7 py-3.5 bg-white text-gray-700 font-semibold rounded-xl border-2 border-gray-300 hover:bg-gray-50 transition-all">
                 Browse Programs
               </Link>
             </div>

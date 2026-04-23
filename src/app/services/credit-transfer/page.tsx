@@ -104,15 +104,15 @@ export default function CreditTransferPage() {
     <div className="pt-24">
 
       {/* ── Hero ── */}
-      <section className="bg-hero-gradient min-h-[70vh] flex items-center px-4 relative overflow-hidden">
+      <section className="bg-[#f7f7f5] min-h-[90vh] flex items-center px-4 relative overflow-hidden">
         <div className="absolute inset-0"
           style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.12) 1.5px, transparent 1.5px)', backgroundSize: '32px 32px' }} />
         <div className="absolute top-0 right-0 w-[480px] h-[480px] bg-accent/15 rounded-full translate-x-28 -translate-y-28 blur-[100px]" />
         <div className="absolute bottom-0 left-0 w-72 h-72 bg-white/5 rounded-full -translate-x-20 translate-y-20 blur-3xl" />
 
         <div className="relative max-w-7xl mx-auto">
-          <div className="flex items-center gap-2 text-white/60 text-sm mb-6">
-            <Link href="/" className="hover:text-accent transition-colors">Home</Link>
+          <div className="flex items-center gap-2 text-gray-500 text-sm mb-6">
+            <Link href="/" className="text-gray-500 hover:text-[#CC2229] transition-colors">Home</Link>
             <span>/</span>
             <Link href="/services" className="hover:text-accent transition-colors">Services</Link>
             <span>/</span>
@@ -124,13 +124,13 @@ export default function CreditTransferPage() {
               <span className="inline-block px-4 py-1.5 bg-accent text-white text-xs font-bold rounded-full mb-4 uppercase tracking-wider">
                 Service
               </span>
-              <h1 className="text-4xl md:text-5xl font-bold text-white font-heading leading-tight mb-5">
+              <h1 className="text-4xl md:text-5xl font-bold text-gray-900 font-heading leading-tight mb-5">
                 Seamlessly Continue<br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-red-300">
                   Your Academic Journey
                 </span>
               </h1>
-              <p className="text-white/75 text-lg leading-relaxed mb-8">
+              <p className="text-gray-600 text-lg leading-relaxed mb-8">
                 Life happens — and sometimes education gets paused. TIMS credit transfer services help you pick up exactly where you left off, without repeating subjects you have already completed.
               </p>
               <div className="flex flex-wrap gap-3">
@@ -139,7 +139,7 @@ export default function CreditTransferPage() {
                   Start the Process <FiArrowRight />
                 </Link>
                 <a href="tel:+917736111588"
-                  className="inline-flex items-center gap-2 px-7 py-3.5 bg-white/15 text-white font-semibold rounded-xl border border-white/30 hover:bg-white/25 transition-all">
+                  className="inline-flex items-center gap-2 px-7 py-3.5 bg-white text-gray-700 font-semibold rounded-xl border-2 border-gray-300 hover:bg-gray-50 transition-all">
                   <FiPhone size={15} /> Talk to Us
                 </a>
               </div>
@@ -147,7 +147,7 @@ export default function CreditTransferPage() {
 
             {/* Right card */}
             <div className="hidden lg:block">
-              <div className="bg-white/10 backdrop-blur-md rounded-3xl p-8 border border-white/20">
+              <div className="bg-white backdrop-blur-md rounded-3xl p-8 border border-gray-100">
                 <p className="text-white font-bold font-heading text-lg mb-5">Who Is This For?</p>
                 <ul className="space-y-3">
                   {[
@@ -157,7 +157,7 @@ export default function CreditTransferPage() {
                     'Student looking for lateral entry',
                     'Studied abroad and want Indian recognition',
                   ].map((item) => (
-                    <li key={item} className="flex items-start gap-2.5 text-white/80 text-sm">
+                    <li key={item} className="flex items-start gap-2.5 text-gray-600 text-sm">
                       <FiCheckCircle className="text-accent shrink-0 mt-0.5" size={15} />
                       {item}
                     </li>
@@ -169,7 +169,7 @@ export default function CreditTransferPage() {
         </div>
 
         <div className="absolute bottom-0 left-0 right-0">
-          <svg viewBox="0 0 1440 50" fill="none"><path d="M0,25 C360,50 1080,0 1440,25 L1440,50 L0,50 Z" fill="#f8fafc" /></svg>
+          <svg viewBox="0 0 1440 50" fill="none"><path d="M0,25 C360,50 1080,0 1440,25 L1440,50 L0,50 Z" fill="white" /></svg>
         </div>
       </section>
 
@@ -213,7 +213,7 @@ export default function CreditTransferPage() {
               <div key={s.num} className="flex flex-col items-center text-center">
                 <div className="relative w-24 h-24 rounded-3xl bg-hero-gradient flex flex-col items-center justify-center shadow-xl mb-5 z-10 border-4 border-white">
                   <span className="text-3xl mb-1">{s.icon}</span>
-                  <span className="text-white/70 text-xs font-bold">{s.num}</span>
+                  <span className="text-gray-600 text-xs font-bold">{s.num}</span>
                 </div>
                 <h3 className="font-bold text-primary-800 font-heading text-base mb-2">{s.title}</h3>
                 <p className="text-gray-500 text-sm leading-relaxed">{s.desc}</p>
@@ -264,19 +264,20 @@ export default function CreditTransferPage() {
 
       {/* ── CTA ── */}
       <section className="bg-gray-50 py-14 px-4">
-        <div className="max-w-3xl mx-auto bg-hero-gradient rounded-3xl p-10 text-center relative overflow-hidden">
+        <div className="max-w-3xl mx-auto rounded-3xl p-10 text-center relative overflow-hidden"
+          style={{ background: 'linear-gradient(135deg, #CC2229 0%, #2B3488 100%)' }}>
           <div className="absolute inset-0 opacity-10"
-            style={{ backgroundImage: 'radial-gradient(circle, #ffffff 1px, transparent 1px)', backgroundSize: '25px 25px' }} />
+            style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '25px 25px' }} />
           <div className="relative">
             <h2 className="text-2xl md:text-3xl font-bold text-white font-heading mb-3">Ready to Continue Your Degree?</h2>
-            <p className="text-white/75 mb-6">Speak to our counsellors — we will evaluate your previous credits and tell you exactly how much you have already completed.</p>
+            <p className="text-white/80 mb-6">Speak to our counsellors — we will evaluate your previous credits and tell you exactly how much you have already completed.</p>
             <div className="flex flex-wrap gap-3 justify-center">
               <Link href="/contact"
                 className="inline-flex items-center gap-2 px-7 py-3 bg-accent text-white font-bold rounded-xl hover:bg-accent-dark transition-all shadow-lg">
                 Get Free Assessment <FiArrowRight />
               </Link>
               <a href="tel:+917736111588"
-                className="inline-flex items-center gap-2 px-7 py-3 bg-white/15 text-white font-semibold rounded-xl border border-white/30 hover:bg-white/25 transition-all">
+                className="inline-flex items-center gap-2 px-7 py-3 bg-white text-gray-700 font-semibold rounded-xl border-2 border-gray-300 hover:bg-gray-50 transition-all">
                 <FiPhone size={14} /> +91 7736 1115 88
               </a>
             </div>

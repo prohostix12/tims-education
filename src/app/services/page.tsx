@@ -130,20 +130,20 @@ export default function ServicesPage() {
     <div className="pt-24">
 
       {/* ── Hero ── */}
-      <section className="bg-hero-gradient min-h-[70vh] flex items-center px-4 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10"
-          style={{ backgroundImage: 'radial-gradient(circle, #ffffff 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
-        <div className="absolute top-0 right-0 w-80 h-80 bg-accent/10 rounded-full translate-x-28 -translate-y-28 blur-3xl" />
+      <section className="bg-[#f7f7f5] min-h-[90vh] flex items-center px-4 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-50"
+          style={{ backgroundImage: 'radial-gradient(circle, #cbd5e1 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
+        <div className="absolute top-0 right-0 w-80 h-80 bg-primary-100 rounded-full translate-x-28 -translate-y-28 blur-3xl" />
         <div className="absolute bottom-0 left-0 w-60 h-60 bg-white/5 rounded-full -translate-x-20 translate-y-20 blur-2xl" />
 
         <div className="relative max-w-7xl mx-auto text-center">
           <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-3">What We Offer</p>
-          <h1 className="text-4xl md:text-5xl font-bold text-white font-heading mb-4">Our Services</h1>
-          <p className="text-white/75 text-lg max-w-2xl mx-auto mb-6">
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 font-heading mb-4">Our Services</h1>
+          <p className="text-gray-600 text-lg max-w-2xl mx-auto mb-6">
             From admission guidance to embassy attestation — TIMS provides end-to-end education support services designed to make your academic journey smooth and successful.
           </p>
-          <div className="flex items-center justify-center gap-2 text-white/60 text-sm mb-10">
-            <Link href="/" className="hover:text-accent transition-colors">Home</Link>
+          <div className="flex items-center justify-center gap-2 text-gray-500 text-sm mb-10">
+            <Link href="/" className="text-gray-500 hover:text-[#CC2229] transition-colors">Home</Link>
             <span>/</span>
             <span className="text-accent">Services</span>
           </div>
@@ -156,16 +156,16 @@ export default function ServicesPage() {
               { v: '10,000+', l: 'Students Served' },
               { v: '100%', l: 'Satisfaction Focus' },
             ].map((s) => (
-              <div key={s.l} className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 text-center border border-white/15">
-                <p className="text-2xl font-bold text-white font-heading">{s.v}</p>
-                <p className="text-white/65 text-xs mt-0.5">{s.l}</p>
+              <div key={s.l} className="bg-white  rounded-2xl p-4 text-center border border-white/15">
+                <p className="text-2xl font-bold text-gray-900 font-heading">{s.v}</p>
+                <p className="text-gray-500 text-xs mt-0.5">{s.l}</p>
               </div>
             ))}
           </div>
         </div>
 
         <div className="absolute bottom-0 left-0 right-0">
-          <svg viewBox="0 0 1440 50" fill="none"><path d="M0,25 C360,50 1080,0 1440,25 L1440,50 L0,50 Z" fill="#f8fafc" /></svg>
+          <svg viewBox="0 0 1440 50" fill="none"><path d="M0,25 C360,50 1080,0 1440,25 L1440,50 L0,50 Z" fill="white" /></svg>
         </div>
       </section>
 
@@ -188,7 +188,7 @@ export default function ServicesPage() {
                 {/* Card header */}
                 <div className="bg-hero-gradient p-7 relative overflow-hidden">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full translate-x-10 -translate-y-10" />
-                  <div className="absolute bottom-0 left-0 w-24 h-24 bg-accent/10 rounded-full -translate-x-6 translate-y-6" />
+                  <div className="absolute bottom-0 left-0 w-24 h-24 bg-primary-100 rounded-full -translate-x-6 translate-y-6" />
                   <div className="relative flex items-start gap-4">
                     <div className="text-5xl">{svc.icon}</div>
                     <div>
@@ -196,7 +196,7 @@ export default function ServicesPage() {
                         Service
                       </span>
                       <h3 className="text-white font-bold font-heading text-xl leading-snug">{svc.title}</h3>
-                      <p className="text-white/65 text-sm mt-0.5">{svc.tagline}</p>
+                      <p className="text-gray-500 text-sm mt-0.5">{svc.tagline}</p>
                     </div>
                   </div>
                 </div>
@@ -255,18 +255,18 @@ export default function ServicesPage() {
       <section className="bg-gray-50 py-10 px-4">
         <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="md:col-span-2 bg-hero-gradient rounded-3xl p-8 relative overflow-hidden">
-            <div className="absolute inset-0 opacity-10"
-              style={{ backgroundImage: 'radial-gradient(circle, #ffffff 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
+            <div className="absolute inset-0 opacity-50"
+              style={{ backgroundImage: 'radial-gradient(circle, #cbd5e1 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
             <div className="relative">
-              <h2 className="text-2xl font-bold text-white font-heading mb-2">Not sure which service you need?</h2>
-              <p className="text-white/70 text-sm mb-5">Our counsellors will listen to your situation and recommend exactly what you need — completely free of charge.</p>
+              <h2 className="text-2xl font-bold text-gray-900 font-heading mb-2">Not sure which service you need?</h2>
+              <p className="text-gray-600 text-sm mb-5">Our counsellors will listen to your situation and recommend exactly what you need — completely free of charge.</p>
               <div className="flex flex-wrap gap-3">
                 <Link href="/contact"
                   className="inline-flex items-center gap-2 px-6 py-3 bg-accent text-white font-bold rounded-xl hover:bg-accent-dark transition-all shadow-md text-sm">
                   Get Free Guidance <FiArrowRight />
                 </Link>
                 <Link href="/courses"
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-white/15 text-white font-semibold rounded-xl border border-white/30 hover:bg-white/25 transition-all text-sm">
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-white text-gray-700 font-semibold rounded-xl border-2 border-gray-300 hover:bg-gray-50 transition-all text-sm">
                   Browse Programs
                 </Link>
               </div>

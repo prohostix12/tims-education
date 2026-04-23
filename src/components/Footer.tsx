@@ -1,4 +1,7 @@
+'use client'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { FiPhone, FiMail, FiMapPin } from 'react-icons/fi'
 import { FaFacebook, FaInstagram, FaYoutube, FaTwitter, FaTelegram } from 'react-icons/fa'
 
@@ -21,25 +24,41 @@ const programs = [
 ]
 
 export default function Footer() {
+  const pathname = usePathname()
+  const [logoIcon, setLogoIcon] = useState('')
+
+  useEffect(() => {
+    fetch(`/api/settings?t=${Date.now()}`, { cache: 'no-store' })
+      .then(r => r.json())
+      .then(d => { setLogoIcon(d.logoIcon || '') })
+      .catch(() => {})
+  }, [])
+
+  if (pathname?.startsWith('/admin') || pathname === '/login') return null
   return (
     <footer className="bg-primary-800 text-white">
       {/* Main Footer */}
       <div className="max-w-7xl mx-auto px-4 py-14 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
         {/* Brand */}
         <div>
-          <div className="flex items-center gap-2 mb-4">
-            <svg width="40" height="32" viewBox="0 0 44 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <polygon points="0,4 28,0 20,12" fill="#CC2229" />
-              <polygon points="8,14 28,0 44,22 20,26" fill="#ffffff" opacity="0.9" />
-              <polygon points="20,12 28,0 20,26" fill="#CC2229" opacity="0.7" />
-            </svg>
-            <div>
-              <div className="flex items-baseline gap-0">
-                <span className="text-accent font-extrabold text-xl font-heading leading-tight">TIMS</span>
-                <span className="text-white font-bold text-xl font-heading leading-tight">Online</span>
-              </div>
-              <p className="text-white/50 text-[10px] tracking-wide">Learn Without Boundaries</p>
-            </div>
+          <div className="flex items-center gap-2.5 mb-4">
+            {logoIcon ? (
+              <img src={logoIcon} alt="TIMS Logo" className="h-10 w-auto object-contain" />
+            ) : (
+              <>
+                <svg width="46" height="34" viewBox="0 0 58 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <polygon points="0,7 46,0 40,16 0,16" fill="#CC2229"/>
+                  <polygon points="10,20 38,11 56,28 26,37" fill="#ffffff"/>
+                </svg>
+                <div className="flex flex-col leading-none">
+                  <div className="flex items-baseline">
+                    <span className="text-[#CC2229] font-extrabold text-[21px] font-heading tracking-tight">TIMS</span>
+                    <span className="text-white font-bold text-[21px] font-heading">Online</span>
+                  </div>
+                  <p className="text-white/50 text-[8.5px] tracking-widest uppercase mt-[2px]">Learn Without Boundaries</p>
+                </div>
+              </>
+            )}
           </div>
           <p className="text-white/60 text-sm leading-relaxed mb-5">
             Empowering minds, shaping futures with quality education since 2009. Learning made easy and affordable for everyone.

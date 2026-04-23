@@ -4,7 +4,7 @@ import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import {
   FiHome, FiBook, FiBookOpen, FiFileText, FiUsers,
-  FiLogOut, FiMenu, FiX, FiExternalLink,
+  FiLogOut, FiMenu, FiX, FiExternalLink, FiSettings,
 } from 'react-icons/fi'
 
 const navItems = [
@@ -13,6 +13,7 @@ const navItems = [
   { label: 'Universities', href: '/admin/universities', icon: FiBook },
   { label: 'Courses',      href: '/admin/courses',      icon: FiBookOpen },
   { label: 'Blogs',        href: '/admin/blogs',        icon: FiFileText },
+  { label: 'Settings',     href: '/admin/settings',     icon: FiSettings },
 ]
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

@@ -39,23 +39,23 @@ export default function ContactPage() {
   return (
     <div className="pt-24">
       {/* Hero */}
-      <section className="bg-hero-gradient min-h-[70vh] flex items-center px-4 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10"
-          style={{ backgroundImage: 'radial-gradient(circle, #ffffff 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
+      <section className="bg-[#f7f7f5] min-h-[90vh] flex items-center px-4 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-50"
+          style={{ backgroundImage: 'radial-gradient(circle, #cbd5e1 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
         <div className="relative max-w-7xl mx-auto text-center">
           <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-3">Get in Touch</p>
-          <h1 className="text-4xl md:text-5xl font-bold text-white font-heading mb-4">Contact Us</h1>
-          <p className="text-white/75 text-lg max-w-xl mx-auto">
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 font-heading mb-4">Contact Us</h1>
+          <p className="text-gray-600 text-lg max-w-xl mx-auto">
             Have questions about admissions or programs? Reach out — our team is here to guide you.
           </p>
-          <div className="flex items-center justify-center gap-2 mt-4 text-white/60 text-sm">
-            <Link href="/" className="hover:text-accent transition-colors">Home</Link>
+          <div className="flex items-center justify-center gap-2 mt-4 text-gray-500 text-sm">
+            <Link href="/" className="text-gray-500 hover:text-[#CC2229] transition-colors">Home</Link>
             <span>/</span>
             <span className="text-accent">Contact</span>
           </div>
         </div>
         <div className="absolute bottom-0 left-0 right-0">
-          <svg viewBox="0 0 1440 50" fill="none"><path d="M0,25 C360,50 1080,0 1440,25 L1440,50 L0,50 Z" fill="#f8fafc" /></svg>
+          <svg viewBox="0 0 1440 50" fill="none"><path d="M0,25 C360,50 1080,0 1440,25 L1440,50 L0,50 Z" fill="white" /></svg>
         </div>
       </section>
 
@@ -167,7 +167,7 @@ export default function ContactPage() {
                 className="w-full flex items-center justify-center gap-2 py-4 bg-primary-600 text-white font-bold rounded-xl hover:bg-primary-700 transition-all shadow-md hover:shadow-lg disabled:opacity-70 disabled:cursor-not-allowed text-sm">
                 {loading ? (
                   <>
-                    <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    <span className="w-4 h-4 border-2 border-gray-200 border-t-white rounded-full animate-spin" />
                     Sending...
                   </>
                 ) : (

@@ -6,7 +6,6 @@ import {
   FiArrowRight, FiCheckCircle, FiMapPin, FiExternalLink,
   FiAward, FiBookOpen, FiCalendar, FiArrowLeft, FiPhone,
 } from 'react-icons/fi'
-import { COURSES } from '@/lib/data'
 
 interface University {
   slug: string
@@ -38,6 +37,7 @@ interface DBCourse {
   icon: string
   badge?: string
   feeRange?: string
+  eligibility?: string
 }
 
 const naacColor: Record<string, string> = {
@@ -54,6 +54,7 @@ export default function UniversityDetailPage() {
   const [loading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
   const [dbCourses, setDbCourses] = useState<DBCourse[]>([])
+  const [activeCategory, setActiveCategory] = useState('All')
 
   useEffect(() => {
     if (!slug) return
@@ -65,24 +66,17 @@ export default function UniversityDetailPage() {
       .then((d) => { if (d) { setUni(d); setLoading(false) } })
       .catch(() => { setNotFound(true); setLoading(false) })
 
-    // Fetch DB courses assigned to this university
     fetch(`/api/courses/university/${slug}`)
       .then((r) => r.json())
       .then((d) => setDbCourses(Array.isArray(d) ? d : []))
       .catch(() => {})
   }, [slug])
 
-  // Static courses matched by university name
-  const staticCourses = uni
-    ? COURSES.filter((c) =>
-        c.universities.some(
-          (u) =>
-            u.toLowerCase().includes(uni.name.toLowerCase()) ||
-            u.toLowerCase().includes(uni.shortName.toLowerCase()) ||
-            uni.name.toLowerCase().includes(u.toLowerCase())
-        )
-      )
-    : []
+  // Unique categories from DB courses for this university
+  const categories = ['All', ...Array.from(new Set(dbCourses.map((c) => c.category).filter(Boolean)))]
+  const visibleCourses = activeCategory === 'All'
+    ? dbCourses
+    : dbCourses.filter((c) => c.category === activeCategory)
 
   if (loading) {
     return (
@@ -110,7 +104,7 @@ export default function UniversityDetailPage() {
 
       {/* ── Hero ── */}
       <section
-        className="min-h-[80vh] flex items-center px-4 relative overflow-hidden"
+        className="bg-[#f7f7f5] min-h-[90vh] flex items-center px-4 relative overflow-hidden"
         style={uni.banner
           ? {
               backgroundImage: `linear-gradient(135deg, rgba(43,52,136,0.93) 0%, rgba(26,32,96,0.88) 60%, rgba(26,32,96,0.75) 100%), url(${uni.banner})`,
@@ -128,7 +122,6 @@ export default function UniversityDetailPage() {
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/5 rounded-full -translate-x-16 translate-y-16 blur-3xl" />
 
         <div className="relative max-w-7xl mx-auto w-full">
-          {/* Breadcrumb */}
           <div className="flex items-center gap-2 text-white/50 text-sm mb-8">
             <Link href="/" className="hover:text-accent transition-colors">Home</Link>
             <span>/</span>
@@ -138,9 +131,7 @@ export default function UniversityDetailPage() {
           </div>
 
           <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Left */}
             <div>
-              {/* Logo badge */}
               <div className="flex items-center gap-4 mb-6">
                 <div className="w-20 h-20 rounded-2xl bg-white/15 border-2 border-white/25 flex items-center justify-center shrink-0 overflow-hidden">
                   {uni.logo
@@ -168,7 +159,6 @@ export default function UniversityDetailPage() {
                 {uni.description}
               </p>
 
-              {/* Meta chips */}
               <div className="flex flex-wrap gap-3 mb-8">
                 <span className="flex items-center gap-1.5 px-3 py-1.5 bg-white/15 text-white text-xs font-medium rounded-xl border border-white/25">
                   <FiMapPin size={12} className="text-accent" /> {uni.location}
@@ -199,10 +189,9 @@ export default function UniversityDetailPage() {
               </div>
             </div>
 
-            {/* Right — stat cards */}
             <div className="grid grid-cols-2 gap-4">
               {[
-                { label: 'Programs', value: uni.programs?.length ? `${uni.programs.length}+` : 'Multiple', icon: '🎓' },
+                { label: 'Programs', value: dbCourses.length ? `${dbCourses.length}+` : 'Multiple', icon: '🎓' },
                 { label: 'Accreditations', value: uni.accreditations?.length ? `${uni.accreditations.length}+` : 'Approved', icon: '✅' },
                 { label: 'NAAC Grade', value: uni.naac !== '-' ? uni.naac : 'Recognised', icon: '🏆' },
                 { label: 'Mode', value: 'Online / Distance', icon: '💻' },
@@ -222,48 +211,112 @@ export default function UniversityDetailPage() {
         </div>
       </section>
 
-      {/* ── About + Programs ── */}
-      <section className="bg-gray-50 py-16 px-4">
-        <div className="max-w-7xl mx-auto grid lg:grid-cols-3 gap-10">
+      {/* ── Courses Offered ── */}
+      {dbCourses.length > 0 && (
+        <section className="bg-gray-50 py-16 px-4">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-10">
+              <p className="text-primary-600 font-semibold text-sm uppercase tracking-widest mb-2">Programs at {uni.shortName}</p>
+              <h2 className="text-2xl md:text-3xl font-bold text-primary-800 font-heading mb-2">
+                Courses Offered by <span className="text-accent">{uni.shortName}</span>
+              </h2>
+              <p className="text-gray-500 text-sm max-w-xl mx-auto">
+                Browse programs available through TIMS at {uni.name}. Select a category to filter.
+              </p>
+            </div>
 
-          {/* About */}
-          <div className="lg:col-span-2 space-y-8">
-
-            {/* DB Courses assigned to this university */}
-            {dbCourses.length > 0 && (
-              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-7">
-                <h2 className="text-xl font-bold text-primary-800 font-heading mb-1 flex items-center gap-2">
-                  <span className="w-7 h-7 bg-primary-100 rounded-xl flex items-center justify-center text-sm">🎓</span>
-                  Courses Offered
-                </h2>
-                <p className="text-gray-500 text-sm mb-4">Programs available through TIMS at {uni.shortName}</p>
-                <div className="space-y-2">
-                  {dbCourses.map((c) => (
-                    <div key={c._id} className="flex items-center justify-between gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100">
-                      <div className="flex items-center gap-3 min-w-0">
-                        <span className="text-xl shrink-0">{c.icon}</span>
-                        <div className="min-w-0">
-                          <p className="font-semibold text-primary-800 text-sm truncate">{c.title}</p>
-                          <p className="text-xs text-gray-400">{c.duration} · {c.mode}</p>
-                        </div>
-                      </div>
-                      {c.feeRange && <span className="text-xs text-gray-500 shrink-0">{c.feeRange}</span>}
-                    </div>
-                  ))}
-                </div>
+            {/* Category tabs */}
+            {categories.length > 2 && (
+              <div className="flex flex-wrap justify-center gap-2 mb-8">
+                {categories.map((cat) => (
+                  <button
+                    key={cat}
+                    onClick={() => setActiveCategory(cat)}
+                    className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
+                      activeCategory === cat
+                        ? 'bg-primary-600 text-white shadow-md'
+                        : 'bg-white text-gray-600 border border-gray-200 hover:border-primary-300 hover:text-primary-600'
+                    }`}
+                  >
+                    {cat}
+                    {cat !== 'All' && (
+                      <span className={`ml-1.5 text-xs font-bold px-1.5 py-0.5 rounded-md ${
+                        activeCategory === cat ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-500'
+                      }`}>
+                        {dbCourses.filter((c) => c.category === cat).length}
+                      </span>
+                    )}
+                  </button>
+                ))}
               </div>
             )}
 
-            {/* Accreditations */}
+            {/* Course cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {visibleCourses.map((course) => (
+                <div key={course._id}
+                  className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all overflow-hidden group">
+                  <div className="bg-hero-gradient p-5 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-24 h-24 bg-accent/10 rounded-full translate-x-6 -translate-y-6" />
+                    <div className="relative flex items-center justify-between">
+                      <span className="text-3xl">{course.icon}</span>
+                      {course.badge && (
+                        <span className="text-xs font-bold px-2.5 py-1 bg-accent text-white rounded-lg">
+                          {course.badge}
+                        </span>
+                      )}
+                    </div>
+                    <div className="relative mt-3">
+                      <p className="text-white/60 text-xs mb-0.5">{course.category}</p>
+                      <h3 className="text-white font-bold font-heading text-base leading-snug">{course.title}</h3>
+                    </div>
+                  </div>
+                  <div className="p-5">
+                    {course.description && (
+                      <p className="text-gray-500 text-sm leading-relaxed mb-4 line-clamp-2">{course.description}</p>
+                    )}
+                    <div className="flex flex-wrap items-center gap-3 text-xs text-gray-500 mb-4">
+                      {course.duration && <span className="flex items-center gap-1">⏱ {course.duration}</span>}
+                      {course.mode && <span className="flex items-center gap-1">💻 {course.mode}</span>}
+                      {course.feeRange && <span className="flex items-center gap-1">💰 {course.feeRange}</span>}
+                    </div>
+                    {course.eligibility && (
+                      <p className="text-xs text-gray-400 mb-4 border-t border-gray-50 pt-3">
+                        <span className="font-medium text-gray-500">Eligibility:</span> {course.eligibility}
+                      </p>
+                    )}
+                    <Link href="/contact"
+                      className="w-full flex items-center justify-center gap-2 py-2.5 bg-primary-600 text-white font-semibold text-xs rounded-xl hover:bg-primary-700 transition-all">
+                      <FiBookOpen size={13} /> Apply / Enquire
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {visibleCourses.length === 0 && (
+              <div className="text-center py-12 text-gray-400 text-sm">
+                No courses in this category yet.
+              </div>
+            )}
+          </div>
+        </section>
+      )}
+
+      {/* ── About + Sidebar ── */}
+      <section className="bg-white py-16 px-4">
+        <div className="max-w-7xl mx-auto grid lg:grid-cols-3 gap-10">
+
+          <div className="lg:col-span-2 space-y-8">
             {uni.accreditations?.length > 0 && (
-              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-7">
+              <div className="bg-gray-50 rounded-2xl border border-gray-100 shadow-sm p-7">
                 <h2 className="text-xl font-bold text-primary-800 font-heading mb-4 flex items-center gap-2">
                   <span className="w-7 h-7 bg-green-50 rounded-xl flex items-center justify-center text-sm">✅</span>
                   Accreditations & Recognitions
                 </h2>
                 <div className="grid sm:grid-cols-2 gap-3">
                   {uni.accreditations.map((a) => (
-                    <div key={a} className="flex items-center gap-2.5 bg-gray-50 rounded-xl px-4 py-3 border border-gray-100">
+                    <div key={a} className="flex items-center gap-2.5 bg-white rounded-xl px-4 py-3 border border-gray-100">
                       <FiCheckCircle className="text-primary-600 shrink-0" size={15} />
                       <span className="text-gray-700 text-sm">{a}</span>
                     </div>
@@ -272,9 +325,8 @@ export default function UniversityDetailPage() {
               </div>
             )}
 
-            {/* Key Highlights */}
             {uni.highlights?.length > 0 && (
-              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-7">
+              <div className="bg-gray-50 rounded-2xl border border-gray-100 shadow-sm p-7">
                 <h2 className="text-xl font-bold text-primary-800 font-heading mb-4 flex items-center gap-2">
                   <span className="w-7 h-7 bg-yellow-50 rounded-xl flex items-center justify-center text-sm">⭐</span>
                   Key Highlights
@@ -291,10 +343,8 @@ export default function UniversityDetailPage() {
             )}
           </div>
 
-          {/* Sidebar */}
           <div className="space-y-5">
-            {/* Quick info */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-4">
+            <div className="bg-gray-50 rounded-2xl border border-gray-100 shadow-sm p-6 space-y-4">
               <h3 className="font-bold text-primary-800 font-heading text-base">Quick Info</h3>
               {[
                 { label: 'Type', value: uni.type },
@@ -302,15 +352,15 @@ export default function UniversityDetailPage() {
                 uni.established ? { label: 'Established', value: String(uni.established) } : null,
                 uni.naac !== '-' ? { label: 'NAAC Grade', value: uni.naac } : null,
                 uni.feeRange ? { label: 'Fee Range', value: uni.feeRange } : null,
+                dbCourses.length ? { label: 'Programs', value: `${dbCourses.length} available` } : null,
               ].filter(Boolean).map((item) => (
-                <div key={item!.label} className="flex justify-between items-start gap-2 border-b border-gray-50 pb-3 last:border-0 last:pb-0">
+                <div key={item!.label} className="flex justify-between items-start gap-2 border-b border-gray-100 pb-3 last:border-0 last:pb-0">
                   <span className="text-xs text-gray-500 font-medium">{item!.label}</span>
                   <span className="text-xs text-gray-800 font-semibold text-right max-w-[60%]">{item!.value}</span>
                 </div>
               ))}
             </div>
 
-            {/* Fee */}
             {uni.feeRange && (
               <div className="bg-primary-600 rounded-2xl p-6 text-white">
                 <p className="text-white/70 text-xs font-semibold uppercase tracking-widest mb-1">Fee Range</p>
@@ -319,10 +369,9 @@ export default function UniversityDetailPage() {
               </div>
             )}
 
-            {/* Website */}
             {uni.website && (
               <a href={`https://${uni.website.replace(/^https?:\/\//, '')}`} target="_blank" rel="noopener noreferrer"
-                className="flex items-center justify-between gap-3 bg-white rounded-2xl border border-gray-100 shadow-sm p-5 hover:border-primary-300 hover:shadow-md transition-all group">
+                className="flex items-center justify-between gap-3 bg-gray-50 rounded-2xl border border-gray-100 shadow-sm p-5 hover:border-primary-300 hover:shadow-md transition-all group">
                 <div>
                   <p className="text-xs text-gray-500 mb-0.5">Official Website</p>
                   <p className="text-sm font-semibold text-primary-700 break-all">{uni.website}</p>
@@ -331,7 +380,6 @@ export default function UniversityDetailPage() {
               </a>
             )}
 
-            {/* CTA */}
             <div className="bg-accent/5 border border-accent/20 rounded-2xl p-6 text-center">
               <p className="font-bold text-primary-800 font-heading mb-1">Interested?</p>
               <p className="text-gray-500 text-xs mb-4">Talk to our counsellor to know admission dates, fee details, and seat availability.</p>
@@ -343,63 +391,6 @@ export default function UniversityDetailPage() {
           </div>
         </div>
       </section>
-
-      {/* ── Courses Offered Through TIMS ── */}
-      {staticCourses.length > 0 && (
-        <section className="bg-white py-16 px-4">
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-10">
-              <p className="text-primary-600 font-semibold text-sm uppercase tracking-widest mb-2">TIMS Programs</p>
-              <h2 className="text-2xl md:text-3xl font-bold text-primary-800 font-heading mb-2">
-                Courses Offered Through <span className="text-accent">{uni.shortName}</span>
-              </h2>
-              <p className="text-gray-500 text-sm max-w-xl mx-auto">
-                These programs are available for enrolment at TIMS through {uni.name}.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {staticCourses.map((course) => (
-                <div key={course.slug}
-                  className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all overflow-hidden group">
-                  <div className="bg-hero-gradient p-5 relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-24 h-24 bg-accent/10 rounded-full translate-x-6 -translate-y-6" />
-                    <div className="relative flex items-center justify-between">
-                      <span className="text-3xl">{course.icon}</span>
-                      {course.badge && (
-                        <span className="text-xs font-bold px-2.5 py-1 bg-accent text-white rounded-lg">
-                          {course.badge}
-                        </span>
-                      )}
-                    </div>
-                    <div className="relative mt-3">
-                      <p className="text-white/60 text-xs mb-0.5">{course.category}</p>
-                      <h3 className="text-white font-bold font-heading text-base">{course.title}</h3>
-                    </div>
-                  </div>
-                  <div className="p-5">
-                    <p className="text-gray-500 text-sm leading-relaxed mb-4 line-clamp-2">{course.description}</p>
-                    <div className="flex items-center gap-3 text-xs text-gray-500 mb-4">
-                      <span className="flex items-center gap-1">⏱ {course.duration}</span>
-                      <span className="flex items-center gap-1">💻 {course.mode}</span>
-                    </div>
-                    <div className="flex gap-2">
-                      <Link href={`/courses#${course.slug}`}
-                        className="flex-1 flex items-center justify-center gap-1.5 py-2.5 bg-primary-600 text-white font-semibold text-xs rounded-xl hover:bg-primary-700 transition-all">
-                        <FiBookOpen size={13} /> View Course
-                      </Link>
-                      <Link href="/contact"
-                        className="px-4 py-2.5 border-2 border-accent text-accent font-semibold text-xs rounded-xl hover:bg-accent hover:text-white transition-all">
-                        Apply
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* ── CTA ── */}
       <section className="bg-gray-50 py-14 px-4">
