@@ -46,8 +46,8 @@ export default function HeroSection() {
         }}
       />
 
-      <div className="relative w-full max-w-[1400px] mx-auto px-8">
-        <div className="grid items-center gap-0" style={{ gridTemplateColumns: '1fr auto 230px' }}>
+      <div className="relative w-full max-w-6xl mx-auto px-12">
+        <div className="grid items-center gap-0" style={{ gridTemplateColumns: '1fr auto 200px' }}>
 
           {/* ══ Col 1 — Headline + badges + desc + CTA ══ */}
           <div className="flex flex-col justify-center pr-6 py-4">
