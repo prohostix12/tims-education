@@ -1,16 +1,15 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { FiArrowLeft, FiClock, FiCalendar, FiTag, FiArrowRight, FiCheckCircle } from 'react-icons/fi'
-import { BLOG_POSTS } from '@/lib/data'
+import { connectDB } from '@/lib/mongodb'
+import BlogPostModel from '@/models/BlogPost'
 
-export function generateStaticParams() {
-  return BLOG_POSTS.map((p) => ({ slug: p.slug }))
-}
+export const dynamic = 'force-dynamic'
 
-export function generateMetadata({ params }: { params: { slug: string } }) {
-  const post = BLOG_POSTS.find((p) => p.slug === params.slug)
-  if (!post) return { title: 'Article Not Found' }
-  return { title: `${post.title} | TIMS Blog`, description: post.excerpt }
+type Post = {
+  _id: string; slug: string; title: string; excerpt: string; content: string
+  author: string; category: string; tags: string[]; image?: string
+  icon: string; date: string; readTime: string; featured: boolean; published: boolean
 }
 
 const categoryColor: Record<string, string> = {
@@ -20,13 +19,28 @@ const categoryColor: Record<string, string> = {
   'Career Tips': 'bg-orange-50 text-orange-700 border-orange-200',
 }
 
-export default function BlogPostPage({ params }: { params: { slug: string } }) {
-  const post = BLOG_POSTS.find((p) => p.slug === params.slug)
-  if (!post) notFound()
+export async function generateMetadata({ params }: { params: { slug: string } }) {
+  await connectDB()
+  const raw = await BlogPostModel.findOne({ slug: params.slug, published: true }).lean()
+  if (!raw) return { title: 'Article Not Found' }
+  const post = JSON.parse(JSON.stringify(raw)) as Post
+  return { title: `${post.title} | TIMS Blog`, description: post.excerpt }
+}
 
-  const related = BLOG_POSTS.filter((p) => p.slug !== post.slug && p.category === post.category).slice(0, 3)
+export default async function BlogPostPage({ params }: { params: { slug: string } }) {
+  await connectDB()
+  const [rawPost, allRaw] = await Promise.all([
+    BlogPostModel.findOne({ slug: params.slug, published: true }).lean(),
+    BlogPostModel.find({ published: true }).lean(),
+  ])
+  if (!rawPost) notFound()
+
+  const post = JSON.parse(JSON.stringify(rawPost)) as Post
+  const all  = JSON.parse(JSON.stringify(allRaw))  as Post[]
+
+  const related = all.filter(p => p.slug !== post.slug && p.category === post.category).slice(0, 3)
   const more = related.length < 3
-    ? [...related, ...BLOG_POSTS.filter((p) => p.slug !== post.slug && p.category !== post.category).slice(0, 3 - related.length)]
+    ? [...related, ...all.filter(p => p.slug !== post.slug && p.category !== post.category).slice(0, 3 - related.length)]
     : related
 
   const paragraphs = post.content.split('\n\n').filter(Boolean)
@@ -35,7 +49,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
     <div className="pt-24">
 
       {/* ── Hero Banner ── */}
-      <section className="bg-[#f7f7f5] min-h-[90vh] flex items-center px-4 relative overflow-hidden">
+      <section className="bg-gray-50 min-h-[90vh] flex items-center px-4 relative overflow-hidden">
         <div className="absolute inset-0 opacity-50"
           style={{ backgroundImage: 'radial-gradient(circle, #cbd5e1 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
         <div className="absolute bottom-0 right-0 w-72 h-72 bg-primary-100 rounded-full translate-x-20 translate-y-20 blur-3xl" />
@@ -74,7 +88,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
             </span>
             <span className="flex items-center gap-1.5">
               <FiCalendar size={14} />
-              {new Date(post.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
+              {post.date ? new Date(post.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) : ''}
             </span>
             <span className="flex items-center gap-1.5">
               <FiClock size={14} /> {post.readTime}
@@ -197,7 +211,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
                 </span>
                 <div className="mt-4 pt-4 border-t border-gray-100 space-y-1.5 text-sm text-gray-500">
                   <div className="flex items-center gap-2"><FiCalendar size={13} className="text-accent" />
-                    {new Date(post.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
+                    {post.date ? new Date(post.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) : '—'}
                   </div>
                   <div className="flex items-center gap-2"><FiClock size={13} className="text-accent" /> {post.readTime}</div>
                 </div>
@@ -255,46 +269,48 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
       </section>
 
       {/* ── More articles ── */}
-      <section className="bg-white py-14 px-4">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-2xl font-bold text-primary-800 font-heading mb-8 text-center">More Articles</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {more.map((p) => (
-              <Link key={p.slug} href={`/blog/${p.slug}`}
-                className="group bg-gray-50 rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all">
-                <div className="bg-hero-gradient p-5 relative overflow-hidden">
-                  <div className="absolute top-0 right-0 w-20 h-20 bg-accent/10 rounded-full translate-x-6 -translate-y-6" />
-                  <div className="relative">
-                    <span className={`text-xs font-bold px-2.5 py-1 rounded-lg border ${categoryColor[p.category] || 'bg-white text-white border-gray-100'}`}>
-                      {p.category}
-                    </span>
-                    <div className="text-3xl mt-3 mb-2">{p.icon}</div>
-                    <h3 className="text-white font-bold font-heading text-sm leading-snug line-clamp-2 group-hover:text-accent transition-colors">
-                      {p.title}
-                    </h3>
+      {more.length > 0 && (
+        <section className="bg-white py-14 px-4">
+          <div className="max-w-7xl mx-auto">
+            <h2 className="text-2xl font-bold text-primary-800 font-heading mb-8 text-center">More Articles</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {more.map((p) => (
+                <Link key={p.slug} href={`/blog/${p.slug}`}
+                  className="group bg-gray-50 rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all">
+                  <div className="bg-hero-gradient p-5 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-20 h-20 bg-accent/10 rounded-full translate-x-6 -translate-y-6" />
+                    <div className="relative">
+                      <span className={`text-xs font-bold px-2.5 py-1 rounded-lg border ${categoryColor[p.category] || 'bg-white text-white border-gray-100'}`}>
+                        {p.category}
+                      </span>
+                      <div className="text-3xl mt-3 mb-2">{p.icon}</div>
+                      <h3 className="text-white font-bold font-heading text-sm leading-snug line-clamp-2 group-hover:text-accent transition-colors">
+                        {p.title}
+                      </h3>
+                    </div>
                   </div>
-                </div>
-                <div className="p-5">
-                  <p className="text-gray-500 text-sm leading-relaxed line-clamp-2 mb-3">{p.excerpt}</p>
-                  <div className="flex items-center justify-between text-xs text-gray-400">
-                    <span className="flex items-center gap-1"><FiClock size={11} /> {p.readTime}</span>
-                    <span className="text-primary-600 font-semibold group-hover:text-accent transition-colors flex items-center gap-1">
-                      Read <FiArrowRight size={11} />
-                    </span>
+                  <div className="p-5">
+                    <p className="text-gray-500 text-sm leading-relaxed line-clamp-2 mb-3">{p.excerpt}</p>
+                    <div className="flex items-center justify-between text-xs text-gray-400">
+                      <span className="flex items-center gap-1"><FiClock size={11} /> {p.readTime}</span>
+                      <span className="text-primary-600 font-semibold group-hover:text-accent transition-colors flex items-center gap-1">
+                        Read <FiArrowRight size={11} />
+                      </span>
+                    </div>
                   </div>
-                </div>
-              </Link>
-            ))}
-          </div>
+                </Link>
+              ))}
+            </div>
 
-          <div className="text-center mt-10">
-            <Link href="/blog"
-              className="inline-flex items-center gap-2 px-8 py-3.5 bg-hero-gradient text-white font-bold rounded-xl hover:opacity-90 transition-all shadow-md">
-              View All Articles <FiArrowRight />
-            </Link>
+            <div className="text-center mt-10">
+              <Link href="/blog"
+                className="inline-flex items-center gap-2 px-8 py-3.5 bg-hero-gradient text-white font-bold rounded-xl hover:opacity-90 transition-all shadow-md">
+                View All Articles <FiArrowRight />
+              </Link>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
     </div>
   )

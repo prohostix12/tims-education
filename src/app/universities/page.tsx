@@ -96,7 +96,7 @@ export default function UniversitiesPage() {
     <div className="pt-24">
 
       {/* ── Hero ── */}
-      <section className="bg-[#f7f7f5] min-h-[90vh] flex items-center px-4 relative overflow-hidden">
+      <section className="bg-gray-50 min-h-[90vh] flex items-center px-4 relative overflow-hidden">
         <div className="absolute inset-0 opacity-50"
           style={{ backgroundImage: 'radial-gradient(circle, #cbd5e1 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
         <div className="absolute top-0 right-0 w-80 h-80 bg-primary-100 rounded-full translate-x-28 -translate-y-28 blur-3xl" />

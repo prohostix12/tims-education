@@ -5,14 +5,14 @@ import Contact from '@/models/Contact'
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-    const { name, email, phone, course, message } = body
+    const { name, email, phone, course, message, source } = body
 
-    if (!name || !email || !message) {
-      return NextResponse.json({ error: 'Name, email and message are required.' }, { status: 400 })
+    if (!name) {
+      return NextResponse.json({ error: 'Name is required.' }, { status: 400 })
     }
 
     await connectDB()
-    await Contact.create({ name, email, phone, course, message })
+    await Contact.create({ name, email: email || '', phone: phone || '', course: course || '', message: message || '', source: source || 'Contact Form' })
 
     return NextResponse.json({ success: true, message: 'Message received. We will contact you shortly.' })
   } catch (err) {

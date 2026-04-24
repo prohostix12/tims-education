@@ -40,7 +40,7 @@ export default function ContactPage() {
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, source: 'Contact Form' }),
       })
       if (res.ok) {
         toast.success('Message sent! We\'ll get back to you within 24 hours.')
@@ -58,7 +58,7 @@ export default function ContactPage() {
   return (
     <div className="pt-24">
       {/* Hero */}
-      <section className="bg-[#f7f7f5] min-h-[90vh] flex items-center px-4 relative overflow-hidden">
+      <section className="bg-gray-50 min-h-[90vh] flex items-center px-4 relative overflow-hidden">
         <div className="absolute inset-0 opacity-50"
           style={{ backgroundImage: 'radial-gradient(circle, #cbd5e1 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
         <div className="relative max-w-7xl mx-auto text-center">

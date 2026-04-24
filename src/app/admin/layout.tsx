@@ -5,12 +5,12 @@ import Link from 'next/link'
 import {
   FiHome, FiBook, FiBookOpen, FiFileText, FiUsers,
   FiLogOut, FiMenu, FiX, FiExternalLink, FiSettings,
-  FiFolder, FiCalendar, FiAward, FiMessageSquare,
+  FiFolder, FiCalendar, FiAward, FiZap,
 } from 'react-icons/fi'
 
 const navItems = [
   { label: 'Dashboard',       href: '/admin',                  icon: FiHome },
-  { label: 'Enquiries',       href: '/admin/enquiries',        icon: FiMessageSquare },
+  { label: 'Leads & Enquiries', href: '/admin/leads',          icon: FiZap },
   { label: 'Directors',       href: '/admin/directors',        icon: FiUsers },
   { label: 'Universities',    href: '/admin/universities',     icon: FiBook },
   { label: 'Courses',         href: '/admin/courses',          icon: FiBookOpen },

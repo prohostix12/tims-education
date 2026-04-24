@@ -1,6 +1,6 @@
 'use client'
-import { useEffect, useState } from 'react'
-import { FiPlus, FiEdit2, FiTrash2, FiX, FiSave, FiUser } from 'react-icons/fi'
+import { useEffect, useRef, useState } from 'react'
+import { FiPlus, FiEdit2, FiTrash2, FiX, FiSave, FiUser, FiUpload } from 'react-icons/fi'
 
 interface Director {
   _id?: string
@@ -21,6 +21,20 @@ export default function AdminDirectors() {
   const [saving, setSaving] = useState(false)
   const [msg, setMsg] = useState('')
   const [deleting, setDeleting] = useState<string | null>(null)
+  const [uploading, setUploading] = useState(false)
+  const fileRef = useRef<HTMLInputElement>(null)
+
+  const uploadPhoto = async (file: File) => {
+    setUploading(true)
+    const fd = new FormData()
+    fd.append('file', file)
+    const res = await fetch('/api/admin/upload', { method: 'POST', body: fd })
+    if (res.ok) {
+      const { url } = await res.json()
+      setEditing((p) => ({ ...p, photo: url }))
+    }
+    setUploading(false)
+  }
 
   const load = () => {
     fetch('/api/admin/directors')
@@ -159,7 +173,35 @@ export default function AdminDirectors() {
 
               <F label="Full Name *" value={editing.name} onChange={(v) => setEditing((p) => ({ ...p, name: v }))} />
               <F label="Role / Designation *" value={editing.role} onChange={(v) => setEditing((p) => ({ ...p, role: v }))} placeholder="e.g. Founder & Director" />
-              <F label="Photo URL" value={editing.photo} onChange={(v) => setEditing((p) => ({ ...p, photo: v }))} placeholder="https://example.com/photo.jpg" />
+
+              {/* Photo field with upload */}
+              <div>
+                <label className="block text-xs font-medium text-gray-600 mb-1">Photo</label>
+                <div className="flex gap-2">
+                  <input
+                    value={editing.photo}
+                    onChange={(e) => setEditing((p) => ({ ...p, photo: e.target.value }))}
+                    placeholder="https://example.com/photo.jpg"
+                    className="flex-1 border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-100"
+                  />
+                  <input
+                    ref={fileRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => { if (e.target.files?.[0]) uploadPhoto(e.target.files[0]) }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => fileRef.current?.click()}
+                    disabled={uploading}
+                    className="flex items-center gap-1.5 px-3 py-2.5 text-sm font-medium text-primary-600 border border-primary-200 rounded-xl hover:bg-primary-50 transition-colors disabled:opacity-60 whitespace-nowrap"
+                  >
+                    <FiUpload size={14} /> {uploading ? 'Uploading…' : 'Upload'}
+                  </button>
+                </div>
+              </div>
+
               <F label="Display Order" value={String(editing.order)} onChange={(v) => setEditing((p) => ({ ...p, order: v === '' ? '' : Number(v) }))} type="number" placeholder="1" />
               <TA label="Bio / Description" value={editing.bio} onChange={(v) => setEditing((p) => ({ ...p, bio: v }))} rows={5} />
             </div>

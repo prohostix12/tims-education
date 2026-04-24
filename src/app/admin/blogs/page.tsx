@@ -28,7 +28,7 @@ export default function AdminBlogs() {
   const [editing, setEditing] = useState<BlogPost>(empty)
   const [saving, setSaving] = useState(false)
   const [msg, setMsg] = useState('')
-  const [deleting, setDeleting] = useState<string | null>(null)
+  const [deleting, setDeleting]   = useState<string | null>(null)
 
   const load = () => {
     fetch('/api/admin/blogs')
@@ -115,10 +115,12 @@ export default function AdminBlogs() {
           <h1 className="text-xl font-bold text-gray-800 font-heading">Blog Posts</h1>
           <p className="text-gray-500 text-sm">{list.length} posts in database</p>
         </div>
-        <button onClick={openNew}
-          className="flex items-center gap-2 px-4 py-2.5 bg-primary-600 text-white text-sm font-semibold rounded-xl hover:bg-primary-700 transition-all shadow-sm">
-          <FiPlus size={16} /> New Post
-        </button>
+        <div className="flex items-center gap-2 flex-wrap">
+          <button onClick={openNew}
+            className="flex items-center gap-2 px-4 py-2.5 bg-primary-600 text-white text-sm font-semibold rounded-xl hover:bg-primary-700 transition-all shadow-sm">
+            <FiPlus size={16} /> New Post
+          </button>
+        </div>
       </div>
 
       <div className="relative">

@@ -16,11 +16,23 @@ export default function HeroSection() {
   const [fetchDone, setFetchDone] = useState(false)
 
   useEffect(() => {
+    // Apply cached image immediately — eliminates visible lag on refresh
+    try {
+      const cached = sessionStorage.getItem('tims_heroImage')
+      if (cached !== null) {
+        setHeroImage(cached)
+        setFetchDone(true)
+      }
+    } catch {}
+
+    // Fetch fresh in background and update cache
     fetch(`/api/settings?t=${Date.now()}`, { cache: 'no-store' })
       .then(r => r.json())
       .then(d => {
-        setHeroImage(d.heroStudentImage || '')
+        const img = d.heroStudentImage || ''
+        setHeroImage(img)
         setImgError(false)
+        try { sessionStorage.setItem('tims_heroImage', img) } catch {}
       })
       .catch(() => {})
       .finally(() => setFetchDone(true))

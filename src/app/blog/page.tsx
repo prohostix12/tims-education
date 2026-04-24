@@ -1,8 +1,13 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { FiArrowRight, FiCalendar, FiUser, FiClock, FiTag, FiSearch } from 'react-icons/fi'
-import { BLOG_POSTS } from '@/lib/data'
+
+type BlogPost = {
+  _id: string; slug: string; title: string; excerpt: string; content: string
+  author: string; category: string; tags: string[]; image?: string
+  icon: string; date: string; readTime: string; featured: boolean; published: boolean
+}
 
 const categories = ['All', 'Education Guide', 'University Spotlight', 'Student Tips', 'Career Tips']
 
@@ -14,24 +19,57 @@ const categoryColors: Record<string, string> = {
 }
 
 export default function BlogPage() {
+  const [posts, setPosts] = useState<BlogPost[]>([])
+  const [loading, setLoading] = useState(true)
   const [activeCategory, setActiveCategory] = useState('All')
   const [search, setSearch] = useState('')
+  const [subEmail, setSubEmail] = useState('')
+  const [subStatus, setSubStatus] = useState<'idle' | 'saving' | 'done' | 'error'>('idle')
 
-  const featured = BLOG_POSTS.find((p) => p.featured)!
-  const filtered  = BLOG_POSTS.filter((p) => {
+  useEffect(() => {
+    fetch('/api/blogs')
+      .then(r => r.json())
+      .then(d => { setPosts(Array.isArray(d) ? d : []); setLoading(false) })
+      .catch(() => setLoading(false))
+  }, [])
+
+  const subscribe = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!subEmail) return
+    setSubStatus('saving')
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: subEmail,
+          email: subEmail,
+          source: 'Newsletter',
+          course: 'Newsletter',
+          message: 'Newsletter subscription from blog page.',
+        }),
+      })
+      setSubStatus(res.ok ? 'done' : 'error')
+    } catch {
+      setSubStatus('error')
+    }
+  }
+
+  const featured = posts.find((p) => p.featured)
+  const filtered  = posts.filter((p) => {
     const matchCat  = activeCategory === 'All' || p.category === activeCategory
     const matchSearch = p.title.toLowerCase().includes(search.toLowerCase()) ||
                         p.excerpt.toLowerCase().includes(search.toLowerCase())
     return matchCat && matchSearch && !p.featured
   })
 
-  const recent = BLOG_POSTS.filter((p) => !p.featured).slice(0, 4)
+  const recent = posts.filter((p) => !p.featured).slice(0, 4)
 
   return (
     <div className="pt-24">
 
       {/* ── Hero ── */}
-      <section className="bg-[#f7f7f5] min-h-[90vh] flex items-center px-4 relative overflow-hidden">
+      <section className="bg-gray-50 min-h-[90vh] flex items-center px-4 relative overflow-hidden">
         <div className="absolute inset-0 opacity-50"
           style={{ backgroundImage: 'radial-gradient(circle, #cbd5e1 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
         <div className="absolute top-0 right-0 w-72 h-72 bg-primary-100 rounded-full translate-x-24 -translate-y-24 blur-3xl" />
@@ -66,7 +104,7 @@ export default function BlogPage() {
       <section className="bg-white border-b border-gray-100 py-5 px-4">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-center gap-8">
           {[
-            { v: `${BLOG_POSTS.length}`, l: 'Articles Published' },
+            { v: loading ? '…' : `${posts.length}`, l: 'Articles Published' },
             { v: `${categories.length - 1}`, l: 'Categories' },
             { v: 'Weekly', l: 'New Posts' },
             { v: 'Free', l: 'Always' },
@@ -83,7 +121,7 @@ export default function BlogPage() {
         <div className="max-w-7xl mx-auto">
 
           {/* ── Featured Post ── */}
-          {!search && activeCategory === 'All' && (
+          {!search && activeCategory === 'All' && featured && (
             <div className="mb-12">
               <div className="flex items-center gap-3 mb-5">
                 <div className="h-px flex-1 bg-gray-200" />
@@ -156,7 +194,11 @@ export default function BlogPage() {
 
             {/* Article grid */}
             <div className="lg:col-span-2">
-              {filtered.length === 0 ? (
+              {loading ? (
+                <div className="text-center py-20 bg-white rounded-2xl border border-gray-100">
+                  <p className="text-gray-400">Loading articles…</p>
+                </div>
+              ) : filtered.length === 0 ? (
                 <div className="text-center py-20 bg-white rounded-2xl border border-gray-100">
                   <span className="text-5xl mb-3 block">🔍</span>
                   <p className="text-gray-500">No articles match your search.</p>
@@ -232,7 +274,7 @@ export default function BlogPage() {
                 </h3>
                 <div className="space-y-2">
                   {categories.slice(1).map((cat) => {
-                    const count = BLOG_POSTS.filter((p) => p.category === cat).length
+                    const count = posts.filter((p) => p.category === cat).length
                     return (
                       <button key={cat} onClick={() => setActiveCategory(cat)}
                         className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm text-gray-600 hover:bg-primary-50 hover:text-primary-700 transition-all group">
@@ -269,7 +311,7 @@ export default function BlogPage() {
                   <span className="w-1.5 h-5 bg-accent rounded-full inline-block" /> Popular Tags
                 </h3>
                 <div className="flex flex-wrap gap-2">
-                  {Array.from(new Set(BLOG_POSTS.flatMap((p) => p.tags))).map((tag) => (
+                  {Array.from(new Set(posts.flatMap((p) => p.tags))).map((tag) => (
                     <span key={tag} className="px-3 py-1.5 bg-gray-50 text-gray-600 text-xs rounded-lg border border-gray-100 hover:bg-primary-50 hover:text-primary-700 hover:border-primary-200 cursor-pointer transition-all">
                       #{tag}
                     </span>
@@ -291,14 +333,22 @@ export default function BlogPage() {
             <p className="text-white/70 font-semibold text-sm uppercase tracking-widest mb-2">Stay Informed</p>
             <h2 className="text-2xl md:text-3xl font-bold text-white font-heading mb-2">Subscribe to Our Newsletter</h2>
             <p className="text-white/80 mb-6 text-sm">Admission alerts, education news, and career tips — delivered weekly.</p>
-            <form className="flex gap-3 max-w-sm mx-auto" onSubmit={(e) => e.preventDefault()}>
-              <input type="email" placeholder="your@email.com"
-                className="flex-1 px-4 py-3 rounded-xl text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-white/50" />
-              <button type="submit"
-                className="px-5 py-3 bg-white text-[#CC2229] font-bold rounded-xl hover:bg-gray-100 transition-all text-sm shrink-0">
-                Subscribe
-              </button>
-            </form>
+            {subStatus === 'done' ? (
+              <div className="max-w-sm mx-auto bg-white/20 rounded-xl px-6 py-4 text-white font-semibold text-sm">
+                ✅ You&apos;re subscribed! We&apos;ll keep you updated.
+              </div>
+            ) : (
+              <form className="flex gap-3 max-w-sm mx-auto" onSubmit={subscribe}>
+                <input type="email" required placeholder="your@email.com"
+                  value={subEmail} onChange={e => setSubEmail(e.target.value)}
+                  className="flex-1 px-4 py-3 rounded-xl text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-white/50" />
+                <button type="submit" disabled={subStatus === 'saving'}
+                  className="px-5 py-3 bg-white text-[#CC2229] font-bold rounded-xl hover:bg-gray-100 transition-all text-sm shrink-0 disabled:opacity-70">
+                  {subStatus === 'saving' ? '…' : 'Subscribe'}
+                </button>
+              </form>
+            )}
+            {subStatus === 'error' && <p className="text-red-200 text-xs mt-2">Something went wrong. Please try again.</p>}
             <p className="text-white/50 text-xs mt-3">No spam. Unsubscribe anytime.</p>
           </div>
         </div>

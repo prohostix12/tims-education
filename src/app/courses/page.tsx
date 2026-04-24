@@ -181,7 +181,8 @@ export default function CoursesPage() {
       body: JSON.stringify({
         name: lead.name, phone: lead.phone, email: lead.email,
         course: interest || 'Course Finder Lead',
-        message: `Lead from Course Finder. Qualification: ${Q1.options.find(o => o.value === answers.qual)?.label ?? ''}. Interest: ${interest}.`,
+        source: 'Course Finder',
+        message: `Course Finder lead. Qualification: ${Q1.options.find(o => o.value === answers.qual)?.label ?? '—'}. Interest: ${interest || '—'}.`,
       }),
     }).catch(() => {})
     setLeadSaving(false)
@@ -208,7 +209,7 @@ export default function CoursesPage() {
     <div className="pt-24">
 
       {/* ── Hero ── */}
-      <section className="bg-[#f7f7f5] min-h-[90vh] flex items-center px-4 relative overflow-hidden">
+      <section className="bg-gray-50 min-h-[90vh] flex items-center px-4 relative overflow-hidden">
         <div className="absolute inset-0 opacity-50"
           style={{ backgroundImage: 'radial-gradient(circle, #cbd5e1 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
         <div className="absolute bottom-0 right-0 w-72 h-72 bg-primary-100 rounded-full translate-x-20 translate-y-20 blur-3xl" />
@@ -288,7 +289,7 @@ export default function CoursesPage() {
                     ? 'bg-accent text-white border-accent shadow-md'
                     : 'bg-white text-gray-600 border-gray-200 hover:border-accent/50 hover:text-accent'
                 }`}>
-                {u.shortName}
+                {u.name}
               </button>
             ))}
           </div>

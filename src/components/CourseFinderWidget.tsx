@@ -1,7 +1,11 @@
 'use client'
 import { useState, useMemo } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { FiArrowRight, FiArrowLeft, FiCheckCircle, FiX, FiSearch, FiRefreshCw } from 'react-icons/fi'
+import {
+  FiArrowRight, FiArrowLeft, FiCheckCircle, FiX,
+  FiSearch, FiRefreshCw, FiUser, FiPhone, FiMail,
+} from 'react-icons/fi'
 import { COURSES } from '@/lib/data'
 
 type Answers = {
@@ -23,8 +27,8 @@ const categoryByQual: Record<string, { value: string; label: string; desc: strin
     { value: 'Skill Development', label: '💡 Skill Courses',        desc: 'Job-ready skills in 3–6 months' },
   ],
   graduate: [
-    { value: 'Post Graduate',     label: '🏆 Postgraduate (PG)',    desc: 'MBA, MCA, M.Com, MA — 2yr degrees' },
-    { value: 'Under Graduate',    label: '🎓 Second UG Degree',     desc: 'Bachelor\'s in a new field' },
+    { value: 'Post Graduate',     label: '🏆 Postgraduate (PG)',    desc: "MBA, MCA, M.Com, MA — 2yr degrees" },
+    { value: 'Under Graduate',    label: '🎓 Second UG Degree',     desc: "Bachelor's in a new field" },
     { value: 'Skill Development', label: '💡 Skill Courses',        desc: 'Job-ready certifications' },
     { value: 'Engineering',       label: '⚙️ Engineering (M.Tech)', desc: 'Advanced engineering programs' },
   ],
@@ -37,7 +41,7 @@ const categoryByQual: Record<string, { value: string; label: string; desc: strin
 const steps = [
   {
     id: 'qualification' as keyof Answers,
-    question: "Your highest qualification?",
+    question: 'Your highest qualification?',
     emoji: '🎓',
     options: [
       { value: 'sslc',         label: '10th Pass (SSLC)' },
@@ -86,6 +90,10 @@ const steps = [
   },
 ]
 
+// Lead form appears after this step index (2 = interest)
+const LEAD_AFTER_STEP = 2
+const TOTAL_VISUAL = steps.length + 1  // +1 for lead form step
+
 function scoreMatch(course: typeof COURSES[0], a: Answers): number {
   let s = 0
   if (a.category && course.category !== a.category) return -1
@@ -108,22 +116,90 @@ function scoreMatch(course: typeof COURSES[0], a: Answers): number {
 }
 
 export default function CourseFinderWidget() {
-  const [open, setOpen] = useState(false)
-  const [step, setStep] = useState(0)
-  const [answers, setAnswers] = useState<Answers>({ qualification:'', category:'', interest:'', mode:'', goal:'', budget:'' })
+  const router = useRouter()
+  const [open, setOpen]           = useState(false)
+  const [step, setStep]           = useState(0)
+  const [answers, setAnswers]     = useState<Answers>({ qualification:'', category:'', interest:'', mode:'', goal:'', budget:'' })
   const [showResults, setShowResults] = useState(false)
+
+  // Lead form state
+  const [showLead, setShowLead]     = useState(false)
+  const [leadDone, setLeadDone]     = useState(false)
+  const [lead, setLead]             = useState({ name: '', phone: '', email: '' })
+  const [leadSaving, setLeadSaving] = useState(false)
 
   const currentStep = steps[step]
   const options = currentStep.id === 'category'
     ? (categoryByQual[answers.qualification] ?? [])
     : currentStep.options
   const chosen = answers[currentStep.id]
-  const progress = ((step + 1) / steps.length) * 100
+
+  // Compute visual step index (lead form shifts everything after it by +1)
+  const visualStep = showLead
+    ? LEAD_AFTER_STEP + 1
+    : step > LEAD_AFTER_STEP ? step + 1 : step
+  const progress = ((visualStep + 1) / TOTAL_VISUAL) * 100
 
   const pick = (v: string) => setAnswers(p => ({ ...p, [currentStep.id]: v }))
-  const next = () => { if (step < steps.length - 1) setStep(s => s + 1); else setShowResults(true) }
-  const back = () => { if (step > 0) setStep(s => s - 1) }
-  const restart = () => { setStep(0); setAnswers({ qualification:'', category:'', interest:'', mode:'', goal:'', budget:'' }); setShowResults(false) }
+
+  const next = () => {
+    if (step === LEAD_AFTER_STEP && !leadDone) { setShowLead(true); return }
+    if (step < steps.length - 1) setStep(s => s + 1)
+    else setShowResults(true)
+  }
+
+  const back = () => {
+    if (showLead) { setShowLead(false); return }
+    if (step > 0) setStep(s => s - 1)
+  }
+
+  const saveLead = async () => {
+    if (!lead.name || !lead.phone) return
+    setLeadSaving(true)
+    const interestLabel = steps[2].options.find(o => o.value === answers.interest)?.label ?? ''
+    await fetch('/api/contact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: lead.name,
+        phone: lead.phone,
+        email: lead.email,
+        course: interestLabel || 'Course Finder Lead',
+        source: 'Course Finder',
+        message: `Widget lead. Qualification: ${answers.qualification}. Interest: ${interestLabel}.`,
+      }),
+    }).catch(() => {})
+    setLeadSaving(false)
+    setLeadDone(true)
+    setShowLead(false)
+    setStep(LEAD_AFTER_STEP + 1)
+  }
+
+  const skipLead = () => {
+    setLeadDone(true)
+    setShowLead(false)
+    setStep(LEAD_AFTER_STEP + 1)
+  }
+
+  const enquireNow = (courseTitle: string) => {
+    const params = new URLSearchParams({
+      course: courseTitle,
+      ...(lead.name  && { name:  lead.name }),
+      ...(lead.phone && { phone: lead.phone }),
+      ...(lead.email && { email: lead.email }),
+    })
+    close()
+    router.push(`/contact?${params.toString()}`)
+  }
+
+  const restart = () => {
+    setStep(0)
+    setAnswers({ qualification:'', category:'', interest:'', mode:'', goal:'', budget:'' })
+    setShowResults(false)
+    setShowLead(false)
+    setLeadDone(false)
+    setLead({ name: '', phone: '', email: '' })
+  }
   const close = () => { setOpen(false); restart() }
 
   const recs = useMemo(() =>
@@ -136,24 +212,29 @@ export default function CourseFinderWidget() {
     [answers]
   )
 
+  // Header title & emoji
+  const headerEmoji    = showResults ? '🎉' : showLead ? '🎯' : currentStep.emoji
+  const headerSubtitle = showResults
+    ? 'Your Results'
+    : `Step ${visualStep + 1} of ${TOTAL_VISUAL}`
+  const headerTitle = showResults
+    ? 'Matched Programs'
+    : showLead
+      ? 'Share your details'
+      : currentStep.question
+
   return (
     <>
       {/* ── Floating Button ── */}
       <div className="fixed bottom-20 right-7 z-50">
-        {/* Animated pulse rings */}
         <span className="absolute inset-0 rounded-full animate-ping opacity-25"
           style={{ background: 'linear-gradient(135deg,#CC2229,#2B3488)', animationDuration: '1.8s' }} />
         <span className="absolute inset-0 rounded-full animate-ping opacity-15"
           style={{ background: 'linear-gradient(135deg,#2B3488,#CC2229)', animationDuration: '2.4s', animationDelay: '0.6s' }} />
-
         <button
           onClick={() => setOpen(true)}
           className="relative flex items-center gap-2.5 text-white font-bold text-sm rounded-full shadow-2xl transition-all hover:scale-105 hover:shadow-[0_8px_30px_rgba(204,34,41,0.5)]"
-          style={{
-            background: 'linear-gradient(135deg, #CC2229 0%, #2B3488 100%)',
-            padding: '13px 22px',
-            border: '2px solid rgba(255,255,255,0.2)',
-          }}
+          style={{ background: 'linear-gradient(135deg,#CC2229 0%,#2B3488 100%)', padding: '13px 22px', border: '2px solid rgba(255,255,255,0.2)' }}
         >
           <FiSearch size={16} />
           Find My Course
@@ -163,33 +244,23 @@ export default function CourseFinderWidget() {
       {/* ── Popup Modal ── */}
       {open && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          {/* Backdrop */}
-          <div
-            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-            onClick={close}
-          />
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={close} />
 
-          {/* Modal card */}
-          <div
-            className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col"
-            style={{ maxHeight: '92vh' }}
-          >
-            {/* Header gradient bar */}
-            <div
-              className="px-7 py-5 flex items-center justify-between shrink-0"
-              style={{ background: 'linear-gradient(135deg, #CC2229 0%, #2B3488 100%)' }}
-            >
+          <div className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col"
+            style={{ maxHeight: '92vh' }}>
+
+            {/* Header */}
+            <div className="px-7 py-5 flex items-center justify-between shrink-0"
+              style={{ background: 'linear-gradient(135deg,#CC2229 0%,#2B3488 100%)' }}>
               <div className="flex items-center gap-4">
                 <div className="w-11 h-11 bg-white/20 rounded-xl flex items-center justify-center text-2xl">
-                  {showResults ? '🎉' : currentStep.emoji}
+                  {headerEmoji}
                 </div>
                 <div>
                   <p className="text-white/70 text-xs font-semibold uppercase tracking-widest">
-                    {showResults ? 'Your Results' : `Step ${step + 1} of ${steps.length}`}
+                    {headerSubtitle}
                   </p>
-                  <p className="text-white font-bold text-lg leading-tight">
-                    {showResults ? 'Matched Programs' : currentStep.question}
-                  </p>
+                  <p className="text-white font-bold text-lg leading-tight">{headerTitle}</p>
                 </div>
               </div>
               <button onClick={close}
@@ -201,50 +272,15 @@ export default function CourseFinderWidget() {
             {/* Progress bar */}
             {!showResults && (
               <div className="h-1 bg-gray-100 shrink-0">
-                <div
-                  className="h-full transition-all duration-500"
-                  style={{
-                    width: `${progress}%`,
-                    background: 'linear-gradient(90deg, #CC2229, #2B3488)',
-                  }}
-                />
+                <div className="h-full transition-all duration-500"
+                  style={{ width: `${progress}%`, background: 'linear-gradient(90deg,#CC2229,#2B3488)' }} />
               </div>
             )}
 
             {/* Body */}
             <div className="flex-1 overflow-y-auto">
-              {!showResults ? (
-                <div className="p-7 space-y-3">
-                  {options.map((opt) => {
-                    const sel = chosen === opt.value
-                    return (
-                      <button
-                        key={opt.value}
-                        onClick={() => pick(opt.value)}
-                        className="w-full flex items-center gap-4 p-4 rounded-2xl border-2 text-left transition-all"
-                        style={sel
-                          ? { borderColor: '#CC2229', background: 'rgba(204,34,41,0.05)' }
-                          : { borderColor: '#f3f4f6', background: '#f9fafb' }
-                        }
-                      >
-                        <div
-                          className="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0"
-                          style={sel
-                            ? { borderColor: '#CC2229', background: '#CC2229' }
-                            : { borderColor: '#d1d5db' }
-                          }
-                        >
-                          {sel && <div className="w-2 h-2 bg-white rounded-full" />}
-                        </div>
-                        <p className="font-semibold text-base" style={{ color: sel ? '#CC2229' : '#1f2937' }}>
-                          {'label' in opt ? opt.label : ''}
-                        </p>
-                        {sel && <FiCheckCircle size={15} className="ml-auto shrink-0" style={{ color: '#CC2229' }} />}
-                      </button>
-                    )
-                  })}
-                </div>
-              ) : (
+              {showResults ? (
+                /* ── Results ── */
                 <div className="p-5">
                   {recs.length === 0 ? (
                     <div className="text-center py-8">
@@ -254,13 +290,16 @@ export default function CourseFinderWidget() {
                     </div>
                   ) : (
                     <div className="space-y-3">
+                      {lead.name && (
+                        <p className="text-center text-sm font-semibold pb-1" style={{ color: '#CC2229' }}>
+                          Hi {lead.name}! A counsellor will contact you soon.
+                        </p>
+                      )}
                       {recs.map((course, i) => (
                         <div key={course.slug}
                           className="flex items-center gap-3 p-3.5 bg-gray-50 rounded-2xl border border-gray-100">
-                          <div
-                            className="w-10 h-10 rounded-xl flex items-center justify-center text-xl shrink-0"
-                            style={{ background: 'linear-gradient(135deg,rgba(204,34,41,0.1),rgba(43,52,136,0.1))' }}
-                          >
+                          <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl shrink-0"
+                            style={{ background: 'linear-gradient(135deg,rgba(204,34,41,0.1),rgba(43,52,136,0.1))' }}>
                             {course.icon}
                           </div>
                           <div className="flex-1 min-w-0">
@@ -268,20 +307,17 @@ export default function CourseFinderWidget() {
                               <p className="font-bold text-gray-800 text-sm leading-tight truncate">{course.title}</p>
                               {i === 0 && (
                                 <span className="text-[9px] font-bold px-2 py-0.5 rounded-full text-white shrink-0"
-                                  style={{ background: '#CC2229' }}>
-                                  Best
-                                </span>
+                                  style={{ background: '#CC2229' }}>Best</span>
                               )}
                             </div>
                             <p className="text-gray-400 text-xs mt-0.5">{course.category} · {course.duration}</p>
                           </div>
-                          <Link href="/contact"
+                          <button
+                            onClick={() => enquireNow(course.title)}
                             className="shrink-0 px-3 py-1.5 text-white text-xs font-bold rounded-xl"
-                            style={{ background: '#2B3488' }}
-                            onClick={close}
-                          >
+                            style={{ background: '#2B3488' }}>
                             Enquire
-                          </Link>
+                          </button>
                         </div>
                       ))}
                     </div>
@@ -295,6 +331,84 @@ export default function CourseFinderWidget() {
                       Talk to a Counsellor <FiArrowRight size={13} />
                     </Link>
                   </div>
+                </div>
+              ) : showLead ? (
+                /* ── Lead form step ── */
+                <div className="p-7 space-y-4">
+                  <p className="text-gray-500 text-sm text-center -mt-2 mb-2">
+                    We&apos;ll send your personalised course results and have a counsellor reach out.
+                  </p>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-600 mb-1.5">Your Name *</label>
+                    <div className="relative">
+                      <FiUser className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={14} />
+                      <input
+                        value={lead.name}
+                        onChange={e => setLead(p => ({ ...p, name: e.target.value }))}
+                        placeholder="Full name"
+                        className="w-full pl-10 pr-4 py-3 border-2 border-gray-100 rounded-2xl text-sm focus:outline-none focus:border-[#CC2229] transition-colors"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-600 mb-1.5">Phone Number *</label>
+                    <div className="relative">
+                      <FiPhone className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={14} />
+                      <input
+                        value={lead.phone}
+                        onChange={e => setLead(p => ({ ...p, phone: e.target.value }))}
+                        placeholder="+91 00000 00000"
+                        type="tel"
+                        className="w-full pl-10 pr-4 py-3 border-2 border-gray-100 rounded-2xl text-sm focus:outline-none focus:border-[#CC2229] transition-colors"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-600 mb-1.5">
+                      Email <span className="text-gray-400 font-normal">(optional)</span>
+                    </label>
+                    <div className="relative">
+                      <FiMail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={14} />
+                      <input
+                        value={lead.email}
+                        onChange={e => setLead(p => ({ ...p, email: e.target.value }))}
+                        placeholder="your@email.com"
+                        type="email"
+                        className="w-full pl-10 pr-4 py-3 border-2 border-gray-100 rounded-2xl text-sm focus:outline-none focus:border-[#CC2229] transition-colors"
+                      />
+                    </div>
+                  </div>
+
+                  <p className="text-[11px] text-gray-400 text-center">
+                    🔒 Your details are private and used only by TIMS counsellors.
+                  </p>
+                </div>
+              ) : (
+                /* ── Quiz options ── */
+                <div className="p-7 space-y-3">
+                  {options.map((opt) => {
+                    const sel = chosen === opt.value
+                    return (
+                      <button key={opt.value} onClick={() => pick(opt.value)}
+                        className="w-full flex items-center gap-4 p-4 rounded-2xl border-2 text-left transition-all"
+                        style={sel
+                          ? { borderColor: '#CC2229', background: 'rgba(204,34,41,0.05)' }
+                          : { borderColor: '#f3f4f6', background: '#f9fafb' }
+                        }>
+                        <div className="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0"
+                          style={sel ? { borderColor: '#CC2229', background: '#CC2229' } : { borderColor: '#d1d5db' }}>
+                          {sel && <div className="w-2 h-2 bg-white rounded-full" />}
+                        </div>
+                        <p className="font-semibold text-base" style={{ color: sel ? '#CC2229' : '#1f2937' }}>
+                          {'label' in opt ? opt.label : ''}
+                        </p>
+                        {sel && <FiCheckCircle size={15} className="ml-auto shrink-0" style={{ color: '#CC2229' }} />}
+                      </button>
+                    )
+                  })}
                 </div>
               )}
             </div>
@@ -313,6 +427,29 @@ export default function CourseFinderWidget() {
                     See Full Results <FiArrowRight size={14} />
                   </Link>
                 </>
+              ) : showLead ? (
+                <>
+                  <button onClick={back}
+                    className="flex items-center gap-2 px-5 py-3 border-2 border-gray-200 text-gray-600 font-semibold rounded-2xl hover:bg-gray-50 transition-all text-sm">
+                    <FiArrowLeft size={14} /> Back
+                  </button>
+                  <div className="flex-1 flex flex-col gap-2">
+                    <button
+                      onClick={saveLead}
+                      disabled={!lead.name || !lead.phone || leadSaving}
+                      className="w-full flex items-center justify-center gap-2 py-3 text-white font-bold rounded-2xl text-sm transition-all disabled:opacity-40"
+                      style={{ background: 'linear-gradient(135deg,#CC2229,#2B3488)' }}>
+                      {leadSaving
+                        ? <><span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" /> Saving…</>
+                        : <>Continue <FiArrowRight size={14} /></>
+                      }
+                    </button>
+                    <button onClick={skipLead}
+                      className="text-xs text-gray-400 hover:text-gray-600 transition-colors text-center underline underline-offset-2">
+                      Skip this step
+                    </button>
+                  </div>
+                </>
               ) : (
                 <>
                   {step > 0 && (
@@ -321,12 +458,9 @@ export default function CourseFinderWidget() {
                       <FiArrowLeft size={14} /> Back
                     </button>
                   )}
-                  <button
-                    onClick={next}
-                    disabled={!chosen}
+                  <button onClick={next} disabled={!chosen}
                     className="flex-1 flex items-center justify-center gap-2 py-3 text-white font-bold rounded-2xl text-sm transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-                    style={{ background: chosen ? 'linear-gradient(135deg,#CC2229,#2B3488)' : '#e5e7eb', color: chosen ? '#fff' : '#9ca3af' }}
-                  >
+                    style={{ background: chosen ? 'linear-gradient(135deg,#CC2229,#2B3488)' : '#e5e7eb', color: chosen ? '#fff' : '#9ca3af' }}>
                     {step === steps.length - 1
                       ? <><FiCheckCircle size={15} /> Show My Courses</>
                       : <>Next <FiArrowRight size={14} /></>}

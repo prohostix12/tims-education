@@ -9,7 +9,11 @@ const BlogPostSchema = new Schema({
   category:  { type: String },
   tags:      { type: [String], default: [] },
   image:     { type: String },
-  published: { type: Boolean, default: false },
+  icon:      { type: String, default: '📝' },
+  date:      { type: String, default: '' },
+  readTime:  { type: String, default: '' },
+  featured:  { type: Boolean, default: false },
+  published: { type: Boolean, default: true },
 }, { timestamps: true })
 
 export default models.BlogPost || model('BlogPost', BlogPostSchema)

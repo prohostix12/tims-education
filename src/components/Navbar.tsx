@@ -5,14 +5,26 @@ import { usePathname } from 'next/navigation'
 import { FiMenu, FiX, FiChevronDown, FiUser, FiSearch } from 'react-icons/fi'
 
 function useSiteSettings() {
-  const pathname = usePathname()
   const [logoIcon, setLogoIcon] = useState('')
+
   useEffect(() => {
+    // Apply cached value immediately — eliminates visible lag on refresh
+    try {
+      const cached = sessionStorage.getItem('tims_logoIcon')
+      if (cached) setLogoIcon(cached)
+    } catch {}
+
+    // Fetch fresh in background and update cache
     fetch(`/api/settings?t=${Date.now()}`, { cache: 'no-store' })
       .then(r => r.json())
-      .then(d => { setLogoIcon(d.logoIcon || '') })
+      .then(d => {
+        const val = d.logoIcon || ''
+        setLogoIcon(val)
+        try { sessionStorage.setItem('tims_logoIcon', val) } catch {}
+      })
       .catch(() => {})
-  }, [pathname])
+  }, [])
+
   return { logoIcon }
 }
 
