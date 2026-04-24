@@ -47,14 +47,14 @@ export default function HeroSection() {
       />
 
       <div className="relative w-full max-w-6xl mx-auto px-12">
-        <div className="grid items-center gap-0" style={{ gridTemplateColumns: '1fr auto 200px' }}>
+        <div className="grid items-center gap-0" style={{ gridTemplateColumns: '1fr auto 190px' }}>
 
           {/* ══ Col 1 — Headline + badges + desc + CTA ══ */}
-          <div className="flex flex-col justify-center pr-6 py-4">
+          <div className="flex flex-col justify-center pr-8 py-6">
 
             <h1
-              className="font-black text-gray-950 font-heading leading-[0.94] tracking-tight mb-6"
-              style={{ fontSize: 'clamp(2.4rem, 4.8vw, 4.2rem)' }}
+              className="font-black text-gray-950 font-heading leading-[0.96] tracking-tight mb-5"
+              style={{ fontSize: 'clamp(1.8rem, 3.2vw, 2.6rem)' }}
             >
               Inspiring<br />
               Education<br />
@@ -62,46 +62,46 @@ export default function HeroSection() {
             </h1>
 
             {/* Badge row */}
-            <div className="flex flex-wrap items-center gap-2.5 mb-5">
-              <span className="bg-gray-900 text-white text-sm font-bold px-5 py-2 rounded-full">
+            <div className="flex flex-wrap items-center gap-2 mb-4">
+              <span className="bg-gray-900 text-white text-xs font-bold px-4 py-1.5 rounded-full">
                 UGC Approved
               </span>
               <span
-                className="w-4 h-4 rounded-full shrink-0"
+                className="w-3 h-3 rounded-full shrink-0"
                 style={{ background: '#CC2229' }}
               />
               <span
-                className="text-white text-sm font-bold px-4 py-2 rounded-full"
+                className="text-white text-xs font-bold px-3.5 py-1.5 rounded-full"
                 style={{ background: '#2B3488' }}
               >
                 9+ Universities
               </span>
               <span
-                className="text-white text-sm font-bold px-4 py-2 rounded-full"
+                className="text-white text-xs font-bold px-3.5 py-1.5 rounded-full"
                 style={{ background: '#CC2229' }}
               >
                 100% Online
               </span>
             </div>
 
-            <p className="text-gray-500 text-[17px] leading-relaxed mb-7 max-w-[380px]">
+            <p className="text-gray-500 text-[14px] leading-relaxed mb-6 max-w-[320px]">
               Fostering ambition and career growth through trusted online and distance education —
               affordable, flexible, and nationally recognised.
             </p>
 
             <Link
               href="/courses"
-              className="inline-flex items-center gap-2 text-white font-bold text-base rounded-full shadow-lg transition-all hover:opacity-90 self-start"
-              style={{ background: '#CC2229', padding: '14px 32px' }}
+              className="inline-flex items-center gap-2 text-white font-bold text-sm rounded-full shadow-lg transition-all hover:opacity-90 self-start"
+              style={{ background: '#CC2229', padding: '11px 26px' }}
             >
-              Getting Started <FiArrowRight size={14} />
+              Getting Started <FiArrowRight size={13} />
             </Link>
           </div>
 
           {/* ══ Col 2 — Student image with circle blobs ══ */}
           <div
             className="hidden lg:block relative shrink-0"
-            style={{ width: 'clamp(340px, 40vw, 560px)', height: 'clamp(380px, 68vh, 620px)' }}
+            style={{ width: 'clamp(300px, 36vw, 480px)', height: 'clamp(330px, 58vh, 520px)' }}
           >
             {/* Large navy circle */}
             <div
@@ -182,48 +182,48 @@ export default function HeroSection() {
 
             {/* Alumni floating badge */}
             <div
-              className="absolute bg-white rounded-2xl flex items-center gap-2.5 border border-gray-100"
+              className="absolute bg-white rounded-xl flex items-center gap-2 border border-gray-100"
               style={{
                 top: '6%',
                 left: '2%',
                 zIndex: 20,
-                padding: '10px 14px',
-                boxShadow: '0 8px 30px rgba(0,0,0,0.12)',
+                padding: '8px 12px',
+                boxShadow: '0 6px 24px rgba(0,0,0,0.10)',
                 animation: 'floatUp 3.5s ease-in-out infinite',
               }}
             >
-              <span style={{ fontSize: 20 }}>🎓</span>
+              <span style={{ fontSize: 16 }}>🎓</span>
               <div>
-                <p className="font-extrabold text-base font-heading leading-none text-gray-900">10,000+</p>
-                <p className="text-gray-400 mt-0.5 text-xs">Alumni</p>
+                <p className="font-extrabold text-sm font-heading leading-none text-gray-900">10,000+</p>
+                <p className="text-gray-400 mt-0.5 text-[11px]">Alumni</p>
               </div>
             </div>
 
             {/* UGC floating card */}
             <div
-              className="absolute bg-white rounded-2xl border border-gray-100"
+              className="absolute bg-white rounded-xl border border-gray-100"
               style={{
                 bottom: '8%',
                 right: '0%',
                 zIndex: 20,
-                width: 175,
-                padding: 12,
-                boxShadow: '0 8px 30px rgba(0,0,0,0.12)',
+                width: 155,
+                padding: 10,
+                boxShadow: '0 6px 24px rgba(0,0,0,0.10)',
                 animation: 'floatDown 4s ease-in-out infinite',
               }}
             >
-              <div className="flex items-start gap-2.5">
+              <div className="flex items-start gap-2">
                 <div
-                  className="rounded-xl flex items-center justify-center shrink-0 text-base"
+                  className="rounded-lg flex items-center justify-center shrink-0 text-sm"
                   style={{
-                    width: 34, height: 34,
+                    width: 28, height: 28,
                     background: 'rgba(204,34,41,0.1)',
                     border: '1px solid rgba(204,34,41,0.2)',
                   }}
                 >🏛️</div>
                 <div>
-                  <p className="font-bold text-gray-800 text-sm leading-tight">UGC Recognised</p>
-                  <p className="text-gray-400 mt-1 leading-relaxed text-xs">
+                  <p className="font-bold text-gray-800 text-xs leading-tight">UGC Recognised</p>
+                  <p className="text-gray-400 mt-0.5 leading-relaxed text-[11px]">
                     Nationally approved programs for jobs & higher studies.
                   </p>
                 </div>
@@ -243,24 +243,24 @@ export default function HeroSection() {
           </div>
 
           {/* ══ Col 3 — Program pills ══ */}
-          <div className="hidden lg:flex flex-col gap-3 pl-6 py-4">
+          <div className="hidden lg:flex flex-col gap-2.5 pl-5 py-6">
             {pills.map((pill) => (
               <div
                 key={pill.label}
-                className="rounded-full text-[15px] font-semibold border whitespace-nowrap text-center transition-all cursor-pointer"
+                className="rounded-full text-[13px] font-semibold border whitespace-nowrap text-center transition-all cursor-pointer"
                 style={
                   pill.active
                     ? {
                         background: '#CC2229',
                         color: '#fff',
                         borderColor: '#CC2229',
-                        padding: '10px 24px',
+                        padding: '8px 18px',
                       }
                     : {
                         background: '#fff',
                         color: '#1a1a1a',
                         borderColor: '#e5e7eb',
-                        padding: '10px 24px',
+                        padding: '8px 18px',
                       }
                 }
               >

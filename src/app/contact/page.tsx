@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { FiPhone, FiMail, FiMapPin, FiSend, FiClock } from 'react-icons/fi'
 import { FaWhatsapp } from 'react-icons/fa'
@@ -9,6 +9,25 @@ import { COURSES } from '@/lib/data'
 export default function ContactPage() {
   const [form, setForm] = useState({ name: '', email: '', phone: '', course: '', message: '' })
   const [loading, setLoading] = useState(false)
+  const [fromFinder, setFromFinder] = useState(false)
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const name   = params.get('name')
+    const phone  = params.get('phone')
+    const email  = params.get('email')
+    const course = params.get('course')
+    if (name || phone || email || course) {
+      setForm(p => ({
+        ...p,
+        name:   name   || p.name,
+        phone:  phone  || p.phone,
+        email:  email  || p.email,
+        course: course || p.course,
+      }))
+      setFromFinder(true)
+    }
+  }, [])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }))
@@ -117,6 +136,16 @@ export default function ContactPage() {
 
           {/* Contact Form */}
           <div className="lg:col-span-2 bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
+            {fromFinder && (
+              <div className="mb-6 flex items-start gap-3 p-4 rounded-xl border"
+                style={{ background: 'linear-gradient(135deg,rgba(43,52,136,0.07),rgba(204,34,41,0.07))', borderColor: 'rgba(43,52,136,0.2)' }}>
+                <span className="text-xl shrink-0">🎯</span>
+                <div>
+                  <p className="font-semibold text-primary-800 text-sm">Course Finder results pre-filled!</p>
+                  <p className="text-gray-500 text-xs mt-0.5">We've added your details from the Course Finder. Review, add your message, and submit.</p>
+                </div>
+              </div>
+            )}
             <h2 className="text-2xl font-bold text-primary-800 font-heading mb-2">Send Us a Message</h2>
             <p className="text-gray-500 text-sm mb-7">Fill out the form and we'll get back to you within 24 hours.</p>
 

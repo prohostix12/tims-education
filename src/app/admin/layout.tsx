@@ -5,15 +5,20 @@ import Link from 'next/link'
 import {
   FiHome, FiBook, FiBookOpen, FiFileText, FiUsers,
   FiLogOut, FiMenu, FiX, FiExternalLink, FiSettings,
+  FiFolder, FiCalendar, FiAward, FiMessageSquare,
 } from 'react-icons/fi'
 
 const navItems = [
-  { label: 'Dashboard',    href: '/admin',              icon: FiHome },
-  { label: 'Directors',    href: '/admin/directors',    icon: FiUsers },
-  { label: 'Universities', href: '/admin/universities', icon: FiBook },
-  { label: 'Courses',      href: '/admin/courses',      icon: FiBookOpen },
-  { label: 'Blogs',        href: '/admin/blogs',        icon: FiFileText },
-  { label: 'Settings',     href: '/admin/settings',     icon: FiSettings },
+  { label: 'Dashboard',       href: '/admin',                  icon: FiHome },
+  { label: 'Enquiries',       href: '/admin/enquiries',        icon: FiMessageSquare },
+  { label: 'Directors',       href: '/admin/directors',        icon: FiUsers },
+  { label: 'Universities',    href: '/admin/universities',     icon: FiBook },
+  { label: 'Courses',         href: '/admin/courses',          icon: FiBookOpen },
+  { label: 'Study Materials', href: '/admin/study-materials',  icon: FiFolder },
+  { label: 'Examinations',    href: '/admin/examinations',     icon: FiCalendar },
+  { label: 'Results',         href: '/admin/results',          icon: FiAward },
+  { label: 'Blogs',           href: '/admin/blogs',            icon: FiFileText },
+  { label: 'Settings',        href: '/admin/settings',         icon: FiSettings },
 ]
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

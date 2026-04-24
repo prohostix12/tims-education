@@ -7,8 +7,8 @@ export default function StatsSection() {
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.2 })
 
   return (
-    <section className="bg-white py-12">
-      <div className="max-w-7xl mx-auto px-4">
+    <section className="bg-white py-14">
+      <div className="max-w-7xl mx-auto px-8">
         <div ref={ref}
           className="bg-hero-gradient rounded-2xl shadow-xl grid grid-cols-2 md:grid-cols-4 gap-1 overflow-hidden">
           {STATS.map((stat, i) => (

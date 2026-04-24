@@ -103,29 +103,17 @@ export default function UniversityDetailPage() {
     <div className="pt-24">
 
       {/* ── Hero ── */}
-      <section
-        className="bg-[#f7f7f5] min-h-[90vh] flex items-center px-4 relative overflow-hidden"
-        style={uni.banner
-          ? {
-              backgroundImage: `linear-gradient(135deg, rgba(43,52,136,0.93) 0%, rgba(26,32,96,0.88) 60%, rgba(26,32,96,0.75) 100%), url(${uni.banner})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-            }
-          : { background: 'linear-gradient(135deg, #2B3488 0%, #1a2060 100%)' }
-        }
-      >
-        {!uni.banner && (
-          <div className="absolute inset-0 opacity-10"
-            style={{ backgroundImage: 'radial-gradient(circle, #ffffff 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
-        )}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-accent/10 rounded-full translate-x-32 -translate-y-32 blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/5 rounded-full -translate-x-16 translate-y-16 blur-3xl" />
+      <section className="bg-[#f7f7f5] min-h-[90vh] flex items-center px-4 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-50"
+          style={{ backgroundImage: 'radial-gradient(circle, #cbd5e1 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-primary-100 rounded-full translate-x-32 -translate-y-32 blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-red-50 rounded-full -translate-x-16 translate-y-16 blur-3xl" />
 
         <div className="relative max-w-7xl mx-auto w-full">
-          <div className="flex items-center gap-2 text-white/50 text-sm mb-8">
-            <Link href="/" className="hover:text-accent transition-colors">Home</Link>
+          <div className="flex items-center gap-2 text-gray-400 text-sm mb-8">
+            <Link href="/" className="hover:text-[#CC2229] transition-colors text-gray-500">Home</Link>
             <span>/</span>
-            <Link href="/universities" className="hover:text-accent transition-colors">Universities</Link>
+            <Link href="/universities" className="hover:text-[#CC2229] transition-colors text-gray-500">Universities</Link>
             <span>/</span>
             <span className="text-accent">{uni.shortName}</span>
           </div>
@@ -133,10 +121,10 @@ export default function UniversityDetailPage() {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
               <div className="flex items-center gap-4 mb-6">
-                <div className="w-20 h-20 rounded-2xl bg-white/15 border-2 border-white/25 flex items-center justify-center shrink-0 overflow-hidden">
+                <div className="w-20 h-20 rounded-2xl bg-white border-2 border-gray-200 flex items-center justify-center shrink-0 overflow-hidden shadow-sm">
                   {uni.logo
                     ? <img src={uni.logo} alt={uni.shortName} className="w-full h-full object-contain p-2" />
-                    : <span className="text-white font-extrabold text-3xl font-heading">{initial}</span>
+                    : <span className="font-extrabold text-3xl font-heading" style={{ color: '#2B3488' }}>{initial}</span>
                   }
                 </div>
                 <div className="flex flex-wrap gap-2">
@@ -145,31 +133,31 @@ export default function UniversityDetailPage() {
                       NAAC {uni.naac}
                     </span>
                   )}
-                  <span className="text-xs font-medium px-3 py-1.5 bg-white/15 text-white rounded-xl border border-white/25">
+                  <span className="text-xs font-medium px-3 py-1.5 bg-white text-gray-600 rounded-xl border border-gray-200 shadow-sm">
                     {uni.type}
                   </span>
                 </div>
               </div>
 
               <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-2">{uni.shortName}</p>
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white font-heading leading-tight mb-4">
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 font-heading leading-tight mb-4">
                 {uni.name}
               </h1>
-              <p className="text-white/75 text-base leading-relaxed mb-6 max-w-xl">
+              <p className="text-gray-600 text-base leading-relaxed mb-6 max-w-xl">
                 {uni.description}
               </p>
 
               <div className="flex flex-wrap gap-3 mb-8">
-                <span className="flex items-center gap-1.5 px-3 py-1.5 bg-white/15 text-white text-xs font-medium rounded-xl border border-white/25">
+                <span className="flex items-center gap-1.5 px-3 py-1.5 bg-white text-gray-600 text-xs font-medium rounded-xl border border-gray-200 shadow-sm">
                   <FiMapPin size={12} className="text-accent" /> {uni.location}
                 </span>
                 {uni.established && (
-                  <span className="flex items-center gap-1.5 px-3 py-1.5 bg-white/15 text-white text-xs font-medium rounded-xl border border-white/25">
+                  <span className="flex items-center gap-1.5 px-3 py-1.5 bg-white text-gray-600 text-xs font-medium rounded-xl border border-gray-200 shadow-sm">
                     <FiCalendar size={12} className="text-accent" /> Est. {uni.established}
                   </span>
                 )}
                 {uni.feeRange && (
-                  <span className="flex items-center gap-1.5 px-3 py-1.5 bg-white/15 text-white text-xs font-medium rounded-xl border border-white/25">
+                  <span className="flex items-center gap-1.5 px-3 py-1.5 bg-white text-gray-600 text-xs font-medium rounded-xl border border-gray-200 shadow-sm">
                     💰 {uni.feeRange}
                   </span>
                 )}
@@ -182,7 +170,7 @@ export default function UniversityDetailPage() {
                 </Link>
                 {uni.website && (
                   <a href={`https://${uni.website.replace(/^https?:\/\//, '')}`} target="_blank" rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-6 py-3 bg-white/15 text-white font-semibold rounded-xl border border-white/30 hover:bg-white/25 transition-all">
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-white text-gray-700 font-semibold rounded-xl border border-gray-200 hover:border-primary-300 hover:text-primary-700 transition-all shadow-sm">
                     <FiExternalLink size={15} /> Official Site
                   </a>
                 )}
@@ -196,10 +184,10 @@ export default function UniversityDetailPage() {
                 { label: 'NAAC Grade', value: uni.naac !== '-' ? uni.naac : 'Recognised', icon: '🏆' },
                 { label: 'Mode', value: 'Online / Distance', icon: '💻' },
               ].map((s) => (
-                <div key={s.label} className="bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/15 text-center hover:bg-white/15 transition-all">
+                <div key={s.label} className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm text-center hover:shadow-md transition-all">
                   <span className="text-2xl mb-2 block">{s.icon}</span>
-                  <p className="text-xl font-bold text-white font-heading">{s.value}</p>
-                  <p className="text-white/60 text-xs mt-0.5">{s.label}</p>
+                  <p className="text-xl font-bold text-gray-900 font-heading">{s.value}</p>
+                  <p className="text-gray-500 text-xs mt-0.5">{s.label}</p>
                 </div>
               ))}
             </div>
@@ -207,7 +195,7 @@ export default function UniversityDetailPage() {
         </div>
 
         <div className="absolute bottom-0 left-0 right-0">
-          <svg viewBox="0 0 1440 50" fill="none"><path d="M0,25 C360,50 1080,0 1440,25 L1440,50 L0,50 Z" fill="#f8fafc" /></svg>
+          <svg viewBox="0 0 1440 50" fill="none"><path d="M0,25 C360,50 1080,0 1440,25 L1440,50 L0,50 Z" fill="white" /></svg>
         </div>
       </section>
 
@@ -256,12 +244,12 @@ export default function UniversityDetailPage() {
               {visibleCourses.map((course) => (
                 <div key={course._id}
                   className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all overflow-hidden group">
-                  <div className="bg-hero-gradient p-5 relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-24 h-24 bg-accent/10 rounded-full translate-x-6 -translate-y-6" />
+                  <div className="p-5 relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #2B3488 0%, #CC2229 100%)' }}>
+                    <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full translate-x-6 -translate-y-6" />
                     <div className="relative flex items-center justify-between">
                       <span className="text-3xl">{course.icon}</span>
                       {course.badge && (
-                        <span className="text-xs font-bold px-2.5 py-1 bg-accent text-white rounded-lg">
+                        <span className="text-xs font-bold px-2.5 py-1 bg-white/20 text-white rounded-lg border border-white/30">
                           {course.badge}
                         </span>
                       )}
@@ -394,23 +382,24 @@ export default function UniversityDetailPage() {
 
       {/* ── CTA ── */}
       <section className="bg-gray-50 py-14 px-4">
-        <div className="max-w-3xl mx-auto bg-hero-gradient rounded-3xl p-10 text-center relative overflow-hidden">
+        <div className="max-w-3xl mx-auto rounded-3xl p-10 text-center relative overflow-hidden"
+          style={{ background: 'linear-gradient(135deg, #CC2229 0%, #2B3488 100%)' }}>
           <div className="absolute inset-0 opacity-10"
             style={{ backgroundImage: 'radial-gradient(circle, #ffffff 1px, transparent 1px)', backgroundSize: '25px 25px' }} />
           <div className="relative">
             <h2 className="text-2xl md:text-3xl font-bold text-white font-heading mb-3">
               Ready to enrol at {uni.shortName}?
             </h2>
-            <p className="text-white/75 mb-6 text-sm max-w-lg mx-auto">
+            <p className="text-white/80 mb-6 text-sm max-w-lg mx-auto">
               Our counsellors will walk you through the admission process, fee structure, and scholarship options — completely free.
             </p>
             <div className="flex flex-wrap gap-3 justify-center">
               <Link href="/contact"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-accent text-white font-bold rounded-xl hover:bg-accent-dark transition-all shadow-lg text-sm">
+                className="inline-flex items-center gap-2 px-6 py-3 bg-white text-[#CC2229] font-bold rounded-xl hover:bg-gray-100 transition-all shadow-lg text-sm">
                 Get Free Counselling <FiArrowRight />
               </Link>
               <Link href="/universities"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-white/15 text-white font-semibold rounded-xl border border-white/30 hover:bg-white/25 transition-all text-sm">
+                className="inline-flex items-center gap-2 px-6 py-3 bg-white/20 text-white font-semibold rounded-xl border-2 border-white/40 hover:bg-white/30 transition-all text-sm">
                 <FiArrowLeft size={14} /> All Universities
               </Link>
             </div>

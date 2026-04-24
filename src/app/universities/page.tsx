@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { FiArrowRight, FiCheckCircle, FiMapPin } from 'react-icons/fi'
+import { FiArrowRight, FiCheckCircle, FiMapPin, FiDownload, FiBookOpen, FiChevronDown } from 'react-icons/fi'
 
 interface University {
   slug: string
@@ -22,6 +22,19 @@ interface University {
   filterTags?: string[]
 }
 
+interface StudyMaterial {
+  _id: string
+  universitySlug: string
+  universityName: string
+  courseTitle: string
+  subject: string
+  title: string
+  description: string
+  fileUrl: string
+  type: string
+  semester: string
+}
+
 const filters = ['All', '10th/Plus Two', 'Degree/PG', 'Study Materials', 'Examination']
 
 const naacBadge: Record<string, string> = {
@@ -38,22 +51,46 @@ const filterIcons: Record<string, string> = {
   'Examination': '✍️',
 }
 
+const typeBadge = (t: string) =>
+  t === 'pdf' ? 'bg-red-50 text-red-600 border-red-100' :
+  t === 'video' ? 'bg-purple-50 text-purple-600 border-purple-100' :
+  'bg-blue-50 text-blue-600 border-blue-100'
+
+const typeIcon = (t: string) => t === 'pdf' ? '📄' : t === 'video' ? '🎥' : '🔗'
+
 export default function UniversitiesPage() {
   const router = useRouter()
   const [activeFilter, setActiveFilter] = useState('All')
   const [universities, setUniversities] = useState<University[]>([])
   const [loading, setLoading] = useState(true)
+  const [studyMaterials, setStudyMaterials] = useState<StudyMaterial[]>([])
+  const [expandedUni, setExpandedUni] = useState<string | null>(null)
 
   useEffect(() => {
     fetch('/api/universities')
       .then((r) => r.json())
       .then((d) => { setUniversities(Array.isArray(d) ? d : []); setLoading(false) })
       .catch(() => setLoading(false))
+
+    fetch(`/api/study-materials?t=${Date.now()}`, { cache: 'no-store' })
+      .then(r => r.json())
+      .then((d: StudyMaterial[]) => setStudyMaterials(Array.isArray(d) ? d : []))
+      .catch(() => {})
   }, [])
+
+  const unisWithMaterials = new Set(studyMaterials.map(m => m.universitySlug))
+
+  const materialsByUni: Record<string, StudyMaterial[]> = {}
+  for (const m of studyMaterials) {
+    if (!materialsByUni[m.universitySlug]) materialsByUni[m.universitySlug] = []
+    materialsByUni[m.universitySlug].push(m)
+  }
 
   const filtered = activeFilter === 'All'
     ? universities
-    : universities.filter((u) => u.filterTags?.includes(activeFilter))
+    : activeFilter === 'Study Materials'
+      ? universities.filter(u => unisWithMaterials.has(u.slug))
+      : universities.filter(u => u.filterTags?.includes(activeFilter))
 
   return (
     <div className="pt-24">
@@ -133,72 +170,175 @@ export default function UniversitiesPage() {
                 {filtered.length} universit{filtered.length !== 1 ? 'ies' : 'y'} listed
               </p>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filtered.map((u) => (
-                  <div key={u.slug}
-                    className="group bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer"
-                    onClick={() => router.push(`/universities/${u.slug}`)}>
+              {/* ── Study Materials accordion view ── */}
+              {activeFilter === 'Study Materials' ? (
+                <div className="space-y-4">
+                  {filtered.map((u) => {
+                    const uniMats = materialsByUni[u.slug] ?? []
+                    const isOpen = expandedUni === u.slug
+                    const courseGroups: Record<string, StudyMaterial[]> = {}
+                    for (const m of uniMats) {
+                      const key = m.courseTitle || 'General'
+                      if (!courseGroups[key]) courseGroups[key] = []
+                      courseGroups[key].push(m)
+                    }
+                    return (
+                      <div key={u.slug} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                        {/* Accordion header */}
+                        <button
+                          className="w-full flex items-center justify-between p-5 hover:bg-gray-50 transition-colors text-left"
+                          onClick={() => setExpandedUni(isOpen ? null : u.slug)}>
+                          <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 rounded-xl bg-gray-50 border border-gray-200 flex items-center justify-center overflow-hidden shrink-0">
+                              {u.logo
+                                ? <img src={u.logo} alt={u.shortName} className="w-full h-full object-contain p-1" />
+                                : <span className="font-extrabold text-lg font-heading" style={{ color: '#2B3488' }}>{u.shortName?.charAt(0)}</span>
+                              }
+                            </div>
+                            <div>
+                              <p className="font-bold text-gray-800 text-sm">{u.name}</p>
+                              <div className="flex items-center gap-3 mt-0.5">
+                                <span className="text-xs text-gray-400 flex items-center gap-1">
+                                  <FiMapPin size={10} /> {u.location}
+                                </span>
+                                <span className="text-xs text-primary-600 font-semibold">
+                                  {uniMats.length} material{uniMats.length !== 1 ? 's' : ''}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-3 shrink-0">
+                            {u.naac && u.naac !== '-' && (
+                              <span className={`text-xs font-bold px-2.5 py-1 rounded-lg border hidden sm:inline ${naacBadge[u.naac] || 'bg-gray-100 text-gray-600 border-gray-200'}`}>
+                                NAAC {u.naac}
+                              </span>
+                            )}
+                            <FiChevronDown size={16} className={`text-gray-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+                          </div>
+                        </button>
 
-                    {/* Card header */}
-                    <div className="bg-hero-gradient p-6 relative overflow-hidden">
-                      <div className="absolute top-0 right-0 w-28 h-28 bg-primary-100 rounded-full translate-x-8 -translate-y-8" />
-                      <div className="absolute bottom-0 left-0 w-20 h-20 bg-white/5 rounded-full -translate-x-4 translate-y-4" />
-                      <div className="relative flex items-start justify-between">
-                        <div className="w-14 h-14 rounded-2xl bg-gray-100 border border-gray-200 flex items-center justify-center overflow-hidden">
-                          {u.logo && !u.logo.startsWith('/universities/')
-                            ? <img src={u.logo} alt={u.shortName} className="w-full h-full object-contain p-1" />
-                            : <span className="text-white font-extrabold text-2xl font-heading">{u.shortName?.charAt(0)}</span>
-                          }
-                        </div>
-                        {u.naac && u.naac !== '-' && (
-                          <span className={`text-xs font-bold px-2.5 py-1 rounded-lg border ${naacBadge[u.naac] || 'bg-gray-100 text-gray-600 border-gray-200'}`}>
-                            NAAC {u.naac}
-                          </span>
+                        {/* Expanded: courses + materials */}
+                        {isOpen && (
+                          <div className="border-t border-gray-100">
+                            {Object.entries(courseGroups).map(([courseTitle, mats]) => (
+                              <div key={courseTitle} className="border-b border-gray-50 last:border-0">
+                                {/* Course label */}
+                                <div className="px-5 py-3 bg-gray-50 flex items-center gap-2">
+                                  <FiBookOpen size={13} className="text-primary-600 shrink-0" />
+                                  <span className="text-sm font-bold text-primary-700">{courseTitle}</span>
+                                  <span className="text-xs text-gray-400 ml-auto">{mats.length} file{mats.length !== 1 ? 's' : ''}</span>
+                                </div>
+                                {/* Materials */}
+                                <div className="divide-y divide-gray-50">
+                                  {mats.map(m => (
+                                    <div key={m._id} className="flex items-center justify-between gap-3 px-5 py-3.5 hover:bg-gray-50 transition-colors">
+                                      <div className="flex items-start gap-3 min-w-0">
+                                        <span className="text-xl shrink-0 mt-0.5">{typeIcon(m.type)}</span>
+                                        <div className="min-w-0">
+                                          <p className="font-semibold text-gray-800 text-sm truncate">{m.title}</p>
+                                          <div className="flex flex-wrap items-center gap-2 mt-0.5">
+                                            {m.subject && <span className="text-[11px] text-gray-500">{m.subject}</span>}
+                                            {m.semester && <span className="text-[11px] text-gray-400">· {m.semester}</span>}
+                                          </div>
+                                          {m.description && <p className="text-xs text-gray-400 mt-0.5 truncate">{m.description}</p>}
+                                        </div>
+                                      </div>
+                                      <div className="flex items-center gap-2 shrink-0">
+                                        <span className={`text-[11px] font-medium px-2 py-0.5 rounded-lg border hidden sm:inline ${typeBadge(m.type)}`}>
+                                          {m.type.toUpperCase()}
+                                        </span>
+                                        <a href={m.fileUrl} target="_blank" rel="noopener noreferrer"
+                                          className="flex items-center gap-1 px-3 py-1.5 bg-primary-600 text-white text-xs font-semibold rounded-lg hover:bg-primary-700 transition-all">
+                                          <FiDownload size={11} /> Download
+                                        </a>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            ))}
+                            {/* Footer link */}
+                            <div className="px-5 py-3 flex justify-end border-t border-gray-100">
+                              <Link href={`/universities/${u.slug}`}
+                                className="flex items-center gap-1.5 text-xs text-primary-600 font-semibold hover:text-primary-800 transition-colors">
+                                View University Profile <FiArrowRight size={12} />
+                              </Link>
+                            </div>
+                          </div>
                         )}
                       </div>
-                      <div className="relative mt-4">
-                        <p className="text-gray-500 text-xs font-medium mb-0.5">{u.shortName}</p>
-                        <h3 className="text-white font-bold font-heading text-base leading-snug">{u.name}</h3>
-                      </div>
-                    </div>
+                    )
+                  })}
+                </div>
+              ) : (
+                /* ── Normal grid view ── */
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {filtered.map((u) => (
+                    <div key={u.slug}
+                      className="group bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer"
+                      onClick={() => router.push(`/universities/${u.slug}`)}>
 
-                    {/* Card body */}
-                    <div className="p-6">
-                      <div className="flex items-center gap-2 text-xs text-gray-500 mb-4">
-                        <FiMapPin size={12} className="text-accent shrink-0" />
-                        {u.location}{u.established ? ` · Est. ${u.established}` : ''}
-                      </div>
-
-                      <span className="inline-block px-3 py-1 bg-primary-50 text-primary-700 text-xs font-semibold rounded-lg border border-primary-100 mb-4">
-                        {u.type}
-                      </span>
-
-                      <p className="text-gray-500 text-sm leading-relaxed mb-5 line-clamp-3">{u.description}</p>
-
-                      {u.accreditations?.length > 0 && (
-                        <div className="space-y-1.5 mb-5">
-                          {u.accreditations.slice(0, 3).map((a) => (
-                            <div key={a} className="flex items-center gap-2 text-xs text-gray-600">
-                              <FiCheckCircle className="text-primary-600 shrink-0" size={13} /> {a}
-                            </div>
-                          ))}
+                      {/* Card header */}
+                      <div className="bg-hero-gradient p-6 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-28 h-28 bg-primary-100 rounded-full translate-x-8 -translate-y-8" />
+                        <div className="absolute bottom-0 left-0 w-20 h-20 bg-white/5 rounded-full -translate-x-4 translate-y-4" />
+                        <div className="relative flex items-start justify-between">
+                          <div className="w-14 h-14 rounded-2xl bg-gray-100 border border-gray-200 flex items-center justify-center overflow-hidden">
+                            {u.logo && !u.logo.startsWith('/universities/')
+                              ? <img src={u.logo} alt={u.shortName} className="w-full h-full object-contain p-1" />
+                              : <span className="text-white font-extrabold text-2xl font-heading">{u.shortName?.charAt(0)}</span>
+                            }
+                          </div>
+                          {u.naac && u.naac !== '-' && (
+                            <span className={`text-xs font-bold px-2.5 py-1 rounded-lg border ${naacBadge[u.naac] || 'bg-gray-100 text-gray-600 border-gray-200'}`}>
+                              NAAC {u.naac}
+                            </span>
+                          )}
                         </div>
-                      )}
+                        <div className="relative mt-4">
+                          <p className="text-gray-500 text-xs font-medium mb-0.5">{u.shortName}</p>
+                          <h3 className="text-white font-bold font-heading text-base leading-snug">{u.name}</h3>
+                        </div>
+                      </div>
 
-                      <div className="flex gap-2">
-                        <Link href={`/universities/${u.slug}`} onClick={(e) => e.stopPropagation()}
-                          className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-primary-600 text-white font-semibold text-sm rounded-xl hover:bg-primary-700 transition-all">
-                          View Details <FiArrowRight size={14} />
-                        </Link>
-                        <Link href="/contact" onClick={(e) => e.stopPropagation()}
-                          className="px-4 py-2.5 border-2 border-accent text-accent font-semibold text-sm rounded-xl hover:bg-accent hover:text-white transition-all">
-                          Apply
-                        </Link>
+                      {/* Card body */}
+                      <div className="p-6">
+                        <div className="flex items-center gap-2 text-xs text-gray-500 mb-4">
+                          <FiMapPin size={12} className="text-accent shrink-0" />
+                          {u.location}{u.established ? ` · Est. ${u.established}` : ''}
+                        </div>
+
+                        <span className="inline-block px-3 py-1 bg-primary-50 text-primary-700 text-xs font-semibold rounded-lg border border-primary-100 mb-4">
+                          {u.type}
+                        </span>
+
+                        <p className="text-gray-500 text-sm leading-relaxed mb-5 line-clamp-3">{u.description}</p>
+
+                        {u.accreditations?.length > 0 && (
+                          <div className="space-y-1.5 mb-5">
+                            {u.accreditations.slice(0, 3).map((a) => (
+                              <div key={a} className="flex items-center gap-2 text-xs text-gray-600">
+                                <FiCheckCircle className="text-primary-600 shrink-0" size={13} /> {a}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+
+                        <div className="flex gap-2">
+                          <Link href={`/universities/${u.slug}`} onClick={(e) => e.stopPropagation()}
+                            className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-primary-600 text-white font-semibold text-sm rounded-xl hover:bg-primary-700 transition-all">
+                            View Details <FiArrowRight size={14} />
+                          </Link>
+                          <Link href="/contact" onClick={(e) => e.stopPropagation()}
+                            className="px-4 py-2.5 border-2 border-accent text-accent font-semibold text-sm rounded-xl hover:bg-accent hover:text-white transition-all">
+                            Apply
+                          </Link>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </>
           )}
         </div>

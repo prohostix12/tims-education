@@ -33,3 +33,11 @@ export async function PUT(req: NextRequest) {
   const doc = await University.findByIdAndUpdate(_id, rest, { new: true })
   return NextResponse.json(doc)
 }
+
+export async function DELETE(req: NextRequest) {
+  if (!auth(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  await connectDB()
+  const { id } = await req.json()
+  await University.findByIdAndDelete(id)
+  return NextResponse.json({ success: true })
+}

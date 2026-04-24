@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { FiPlus, FiEdit2, FiX, FiSave, FiSearch, FiCheck, FiChevronDown, FiRefreshCw, FiExternalLink } from 'react-icons/fi'
+import { FiPlus, FiEdit2, FiTrash2, FiX, FiSave, FiSearch, FiCheck, FiChevronDown, FiRefreshCw, FiExternalLink } from 'react-icons/fi'
 
 const COURSE_CATEGORIES = [
   { value: 'School Programs',   label: '📚 School Programs (SSLC / Plus Two)' },
@@ -58,6 +58,7 @@ export default function AdminCourses() {
   const [seeding, setSeeding]     = useState(false)
   const [msg, setMsg]             = useState('')
   const [seedMsg, setSeedMsg]     = useState('')
+  const [deleting, setDeleting]   = useState<string | null>(null)
 
   const load = () => {
     fetch('/api/admin/courses')
@@ -124,6 +125,17 @@ export default function AdminCourses() {
       setMsg(err.message || 'Error saving. Check required fields.')
     }
     setSaving(false)
+  }
+
+  const handleDelete = async (id: string) => {
+    if (!confirm('Delete this course?')) return
+    setDeleting(id)
+    await fetch('/api/admin/courses', {
+      method: 'DELETE', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id }),
+    })
+    setDeleting(null)
+    load()
   }
 
   const handleSeed = async () => {
@@ -230,10 +242,16 @@ export default function AdminCourses() {
                       )}
                     </td>
                     <td className="px-5 py-3.5">
+                      <div className="flex items-center gap-1.5">
                       <button onClick={() => openEdit(c)}
-                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-primary-600 hover:bg-primary-50 rounded-lg transition-colors font-medium">
+                        className="flex items-center gap-1 px-2.5 py-1.5 text-xs text-primary-600 hover:bg-primary-50 rounded-lg transition-colors font-medium">
                         <FiEdit2 size={12} /> Edit
                       </button>
+                      <button onClick={() => handleDelete(c._id!)} disabled={deleting === c._id}
+                        className="flex items-center gap-1 px-2.5 py-1.5 text-xs text-red-500 hover:bg-red-50 rounded-lg transition-colors font-medium disabled:opacity-50">
+                        <FiTrash2 size={12} /> {deleting === c._id ? '...' : 'Delete'}
+                      </button>
+                      </div>
                     </td>
                   </tr>
                 ))}

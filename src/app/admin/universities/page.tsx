@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { FiPlus, FiEdit2, FiX, FiSave, FiSearch, FiImage, FiCheck } from 'react-icons/fi'
+import { FiPlus, FiEdit2, FiTrash2, FiX, FiSave, FiSearch, FiImage, FiCheck } from 'react-icons/fi'
 
 const FILTER_TAG_OPTIONS = ['10th/Plus Two', 'Degree/PG', 'Study Materials', 'Examination']
 
@@ -39,6 +39,7 @@ export default function AdminUniversities() {
   const [msg, setMsg] = useState('')
   const [seeding, setSeeding] = useState(false)
   const [seedMsg, setSeedMsg] = useState('')
+  const [deleting, setDeleting] = useState<string | null>(null)
 
   const load = () => {
     fetch('/api/admin/universities')
@@ -88,6 +89,17 @@ export default function AdminUniversities() {
         ? p.filterTags.filter((t) => t !== tag)
         : [...p.filterTags, tag],
     }))
+  }
+
+  const handleDelete = async (id: string) => {
+    if (!confirm('Delete this university? This cannot be undone.')) return
+    setDeleting(id)
+    await fetch('/api/admin/universities', {
+      method: 'DELETE', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id }),
+    })
+    setDeleting(null)
+    load()
   }
 
   const handleSave = async () => {
@@ -219,10 +231,16 @@ export default function AdminUniversities() {
                       </div>
                     </td>
                     <td className="px-5 py-3.5">
-                      <button onClick={() => openEdit(u)}
-                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-primary-600 hover:bg-primary-50 rounded-lg transition-colors font-medium">
-                        <FiEdit2 size={12} /> Edit
-                      </button>
+                      <div className="flex items-center gap-1.5">
+                        <button onClick={() => openEdit(u)}
+                          className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs text-primary-600 hover:bg-primary-50 rounded-lg transition-colors font-medium">
+                          <FiEdit2 size={12} /> Edit
+                        </button>
+                        <button onClick={() => handleDelete(u._id!)} disabled={deleting === u._id}
+                          className="flex items-center gap-1 px-2.5 py-1.5 text-xs text-red-500 hover:bg-red-50 rounded-lg transition-colors font-medium disabled:opacity-50">
+                          <FiTrash2 size={12} /> {deleting === u._id ? '...' : 'Delete'}
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}

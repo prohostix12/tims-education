@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { FiPlus, FiEdit2, FiX, FiSave, FiSearch, FiEye, FiEyeOff } from 'react-icons/fi'
+import { FiPlus, FiEdit2, FiTrash2, FiX, FiSave, FiSearch, FiEye, FiEyeOff } from 'react-icons/fi'
 
 interface BlogPost {
   _id?: string
@@ -28,6 +28,7 @@ export default function AdminBlogs() {
   const [editing, setEditing] = useState<BlogPost>(empty)
   const [saving, setSaving] = useState(false)
   const [msg, setMsg] = useState('')
+  const [deleting, setDeleting] = useState<string | null>(null)
 
   const load = () => {
     fetch('/api/admin/blogs')
@@ -61,6 +62,17 @@ export default function AdminBlogs() {
       title: v,
       slug: p._id ? p.slug : slugify(v),
     }))
+  }
+
+  const handleDelete = async (id: string) => {
+    if (!confirm('Delete this blog post?')) return
+    setDeleting(id)
+    await fetch('/api/admin/blogs', {
+      method: 'DELETE', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id }),
+    })
+    setDeleting(null)
+    load()
   }
 
   const handleSave = async () => {
@@ -158,10 +170,16 @@ export default function AdminBlogs() {
                       )}
                     </td>
                     <td className="px-5 py-3.5">
-                      <button onClick={() => openEdit(b)}
-                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-primary-600 hover:bg-primary-50 rounded-lg transition-colors font-medium">
-                        <FiEdit2 size={12} /> Edit
-                      </button>
+                      <div className="flex items-center gap-1.5">
+                        <button onClick={() => openEdit(b)}
+                          className="flex items-center gap-1 px-2.5 py-1.5 text-xs text-primary-600 hover:bg-primary-50 rounded-lg transition-colors font-medium">
+                          <FiEdit2 size={12} /> Edit
+                        </button>
+                        <button onClick={() => handleDelete(b._id!)} disabled={deleting === b._id}
+                          className="flex items-center gap-1 px-2.5 py-1.5 text-xs text-red-500 hover:bg-red-50 rounded-lg transition-colors font-medium disabled:opacity-50">
+                          <FiTrash2 size={12} /> {deleting === b._id ? '...' : 'Delete'}
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}

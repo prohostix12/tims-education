@@ -44,3 +44,11 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json({ message: err.message || 'Server error' }, { status: 500 })
   }
 }
+
+export async function DELETE(req: NextRequest) {
+  if (!auth(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  await connectDB()
+  const { id } = await req.json()
+  await AdminCourse.findByIdAndDelete(id)
+  return NextResponse.json({ success: true })
+}

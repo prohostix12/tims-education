@@ -4,28 +4,16 @@ import Link from 'next/link'
 import {
   FiDownload, FiArrowRight, FiExternalLink,
   FiBookOpen, FiChevronDown, FiFileText, FiAlertCircle, FiSearch,
-  FiLoader,
+  FiCalendar, FiAward, FiFolder,
 } from 'react-icons/fi'
 
-const tabs = ['Syllabus', 'News & Updates', 'FAQ'] as const
+const tabs = ['Study Materials', 'Examinations', 'Results', 'News & Updates', 'FAQ'] as const
 type Tab = typeof tabs[number]
 
-interface University {
-  slug: string
-  name: string
-  shortName: string
-  logo?: string
-  website?: string
-}
-
-interface Course {
-  _id: string
-  slug: string
-  title: string
-  icon: string
-  category: string
-  syllabusUrl?: string
-}
+interface University { slug: string; name: string; shortName: string; logo?: string; website?: string }
+interface StudyMaterial { _id: string; universitySlug: string; universityName: string; courseTitle: string; subject: string; title: string; description: string; fileUrl: string; type: string; semester: string }
+interface Examination { _id: string; universitySlug: string; universityName: string; courseTitle: string; title: string; description: string; examDate: string; lastDate: string; scheduleUrl: string; instructions: string }
+interface Result { _id: string; universitySlug: string; universityName: string; title: string; description: string; semester: string; resultUrl: string; publishedDate: string }
 
 const news = [
   { date: 'Apr 2025', headline: 'TIMS Admissions Open for 2025–26 Academic Year', tag: 'Admissions', desc: 'Applications are now open for all UG, PG, Diploma, and skill development programs through TIMS partner universities. Enrol before June 30 to avail early-bird benefits.' },
@@ -46,130 +34,96 @@ const faqs = [
   { q: 'Is there a refund policy?', a: 'Refund policies vary by university. Please consult our counsellors before making payment. We ensure full transparency regarding fees and refunds before you enrol.' },
 ]
 
-/* ── Syllabus tab: one university card ── */
-function UniversityCard({ uni, allCourses }: { uni: University; allCourses: Course[] }) {
-  const [expanded, setExpanded] = useState(false)
+const typeIcon = (t: string) => t === 'pdf' ? '📄' : t === 'video' ? '🎥' : '🔗'
+const typeBadge = (t: string) =>
+  t === 'pdf' ? 'bg-red-50 text-red-600 border-red-100' :
+  t === 'video' ? 'bg-purple-50 text-purple-600 border-purple-100' :
+  'bg-blue-50 text-blue-600 border-blue-100'
 
-  // courses that belong to this university
-  const courses = allCourses.filter((c) => {
-    // courses were seeded with uni slugs in the universities[] array
-    // We match by checking if this course has this uni slug
-    return true // filtering happens in parent via the pre-grouped map
-  })
-
+function UniGroupHeader({ slug, name, logo }: { slug: string; name: string; logo?: string }) {
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg transition-all overflow-hidden">
-      {/* Header */}
-      <div className="bg-hero-gradient p-5 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-20 h-20 bg-white/5 rounded-full translate-x-6 -translate-y-6" />
-        <div className="relative flex items-center gap-3">
-          {uni.logo ? (
-            <img src={uni.logo} alt={uni.shortName}
-              className="w-12 h-12 rounded-xl object-contain bg-gray-100 border border-gray-100 p-1 shrink-0" />
-          ) : (
-            <div className="w-12 h-12 rounded-xl bg-gray-100 border border-gray-100 flex items-center justify-center shrink-0">
-              <span className="text-white font-extrabold text-xl font-heading">{uni.shortName?.charAt(0)}</span>
-            </div>
-          )}
-          <div>
-            <p className="text-gray-500 text-xs font-medium">{uni.shortName}</p>
-            <h3 className="text-white font-bold font-heading text-sm leading-snug">{uni.name}</h3>
-          </div>
+    <div className="flex items-center gap-3 mb-4">
+      {logo ? (
+        <img src={logo} alt={slug} className="w-10 h-10 rounded-xl object-contain bg-white border border-gray-200 p-1 shrink-0" />
+      ) : (
+        <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+          style={{ background: 'linear-gradient(135deg,#2B3488,#CC2229)' }}>
+          <span className="text-white font-bold text-sm">{(name || slug).charAt(0).toUpperCase()}</span>
         </div>
-      </div>
-
-      {/* Body */}
-      <div className="p-5">
-        {/* Course count */}
-        <p className="text-xs text-gray-500 mb-4">
-          {courses.length > 0
-            ? `${courses.length} course${courses.length !== 1 ? 's' : ''} available`
-            : 'Courses coming soon'}
-        </p>
-
-        {/* Expand toggle */}
-        {courses.length > 0 && (
-          <div className="border-t border-gray-100 pt-4">
-            <button
-              onClick={() => setExpanded(!expanded)}
-              className="w-full flex items-center justify-between text-xs font-bold text-primary-700 hover:text-accent transition-colors">
-              <span className="flex items-center gap-1.5">
-                <FiDownload size={12} /> Download Syllabus PDFs
-              </span>
-              <FiChevronDown size={13} className={`transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`} />
-            </button>
-
-            {expanded && (
-              <div className="mt-3 space-y-2">
-                {courses.map((c) => (
-                  <div key={c._id}
-                    className="flex items-center justify-between gap-2 px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl">
-                    <div className="flex items-center gap-2 min-w-0">
-                      <span className="text-base shrink-0">{c.icon}</span>
-                      <div className="min-w-0">
-                        <p className="text-xs font-semibold text-gray-800 truncate">{c.title}</p>
-                        <p className="text-[10px] text-gray-400">{c.category}</p>
-                      </div>
-                    </div>
-                    {c.syllabusUrl ? (
-                      <a href={c.syllabusUrl} target="_blank" rel="noreferrer"
-                        className="flex items-center gap-1 px-3 py-1.5 bg-primary-600 text-white text-xs font-semibold rounded-lg hover:bg-primary-700 transition-all shrink-0">
-                        <FiDownload size={10} /> Syllabus
-                      </a>
-                    ) : (
-                      <span className="px-3 py-1.5 bg-gray-100 text-gray-400 text-xs rounded-lg shrink-0">
-                        Coming Soon
-                      </span>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Visit portal */}
-        {uni.website && (
-          <a href={uni.website.startsWith('http') ? uni.website : `https://${uni.website}`}
-            target="_blank" rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-accent hover:text-accent-dark transition-colors mt-4 block">
-            Visit University Portal <FiExternalLink size={12} />
-          </a>
-        )}
+      )}
+      <div>
+        <h3 className="font-bold text-primary-800 font-heading text-base">{name || slug}</h3>
       </div>
     </div>
   )
 }
 
 export default function StudentsPage() {
-  const [activeTab, setActiveTab]     = useState<Tab>('Syllabus')
-  const [openFaq, setOpenFaq]         = useState<number | null>(null)
-  const [universities, setUniversities] = useState<University[]>([])
-  const [allCourses, setAllCourses]   = useState<Course[]>([])
-  const [loadingSyllabus, setLoadingSyllabus] = useState(true)
+  const [activeTab, setActiveTab] = useState<Tab>('Study Materials')
+  const [openFaq, setOpenFaq] = useState<number | null>(null)
 
-  // grouped: uniSlug → Course[]
-  const coursesByUni: Record<string, Course[]> = {}
-  for (const c of allCourses) {
-    // courses have a universities field (array of slugs)
-    const uniSlugs: string[] = (c as any).universities ?? []
-    for (const slug of uniSlugs) {
-      if (!coursesByUni[slug]) coursesByUni[slug] = []
-      coursesByUni[slug].push(c)
-    }
-  }
+  // Study Materials state
+  const [materials, setMaterials] = useState<StudyMaterial[]>([])
+  const [unis, setUnis] = useState<University[]>([])
+  const [loadingMaterials, setLoadingMaterials] = useState(true)
+  const [expandedUni, setExpandedUni] = useState<string | null>(null)
+
+  // Examinations state
+  const [exams, setExams] = useState<Examination[]>([])
+  const [loadingExams, setLoadingExams] = useState(true)
+
+  // Results state
+  const [results, setResults] = useState<Result[]>([])
+  const [loadingResults, setLoadingResults] = useState(true)
 
   useEffect(() => {
-    if (activeTab !== 'Syllabus') return
     Promise.all([
-      fetch('/api/universities').then((r) => r.json()).catch(() => []),
-      fetch('/api/courses/all').then((r) => r.json()).catch(() => []),
-    ]).then(([unis, courses]) => {
-      setUniversities(Array.isArray(unis) ? unis : [])
-      setAllCourses(Array.isArray(courses) ? courses : [])
-      setLoadingSyllabus(false)
+      fetch(`/api/study-materials?t=${Date.now()}`, { cache: 'no-store' }).then(r => r.json()).catch(() => []),
+      fetch('/api/universities').then(r => r.json()).catch(() => []),
+    ]).then(([mats, uniList]) => {
+      setMaterials(Array.isArray(mats) ? mats : [])
+      setUnis(Array.isArray(uniList) ? uniList : [])
+      setLoadingMaterials(false)
     })
+  }, [])
+
+  useEffect(() => {
+    if (activeTab !== 'Examinations') return
+    fetch(`/api/examinations?t=${Date.now()}`, { cache: 'no-store' })
+      .then(r => r.json()).then(d => { setExams(Array.isArray(d) ? d : []); setLoadingExams(false) })
+      .catch(() => setLoadingExams(false))
   }, [activeTab])
+
+  useEffect(() => {
+    if (activeTab !== 'Results') return
+    fetch(`/api/results?t=${Date.now()}`, { cache: 'no-store' })
+      .then(r => r.json()).then(d => { setResults(Array.isArray(d) ? d : []); setLoadingResults(false) })
+      .catch(() => setLoadingResults(false))
+  }, [activeTab])
+
+  // Group materials by university slug
+  const materialsByUni: Record<string, StudyMaterial[]> = {}
+  for (const m of materials) {
+    if (!materialsByUni[m.universitySlug]) materialsByUni[m.universitySlug] = []
+    materialsByUni[m.universitySlug].push(m)
+  }
+  // Only unis that have materials
+  const unisWithMaterials = Object.keys(materialsByUni)
+
+  // Group exams / results by uni
+  const examsByUni: Record<string, Examination[]> = {}
+  for (const e of exams) {
+    if (!examsByUni[e.universitySlug]) examsByUni[e.universitySlug] = []
+    examsByUni[e.universitySlug].push(e)
+  }
+  const resultsByUni: Record<string, Result[]> = {}
+  for (const r of results) {
+    if (!resultsByUni[r.universitySlug]) resultsByUni[r.universitySlug] = []
+    resultsByUni[r.universitySlug].push(r)
+  }
+
+  const uniMap: Record<string, University> = {}
+  for (const u of unis) uniMap[u.slug] = u
 
   return (
     <div className="pt-24">
@@ -184,7 +138,7 @@ export default function StudentsPage() {
           <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-3">Students Corner</p>
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 font-heading mb-4">Student Resources</h1>
           <p className="text-gray-600 text-lg max-w-2xl mx-auto mb-6">
-            Everything you need as a TIMS student — syllabus, results, timetables, downloads, latest news, and support.
+            Everything you need as a TIMS student — study materials, exam schedules, results, news, and support.
           </p>
           <div className="flex items-center justify-center gap-2 text-gray-500 text-sm mb-10">
             <Link href="/" className="text-gray-500 hover:text-[#CC2229] transition-colors">Home</Link>
@@ -233,24 +187,24 @@ export default function StudentsPage() {
       <section className="bg-gray-50 py-14 px-4">
         <div className="max-w-7xl mx-auto">
 
-          {/* ── SYLLABUS TAB ── */}
-          {activeTab === 'Syllabus' && (
+          {/* ── STUDY MATERIALS ── */}
+          {activeTab === 'Study Materials' && (
             <div>
               <div className="flex items-center gap-3 mb-8">
                 <div className="w-10 h-10 rounded-xl bg-primary-600 flex items-center justify-center">
-                  <FiBookOpen className="text-white" size={18} />
+                  <FiFolder className="text-white" size={18} />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold text-primary-800 font-heading">Syllabus by University</h2>
-                  <p className="text-gray-500 text-sm">Click "Download Syllabus PDFs" under any university to view courses and download</p>
+                  <h2 className="text-2xl font-bold text-primary-800 font-heading">Study Materials</h2>
+                  <p className="text-gray-500 text-sm">Download PDFs, videos and resources by university</p>
                 </div>
               </div>
 
-              {loadingSyllabus ? (
+              {loadingMaterials ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {[1,2,3,4,5,6].map((i) => (
+                  {[1,2,3].map(i => (
                     <div key={i} className="bg-white rounded-2xl border border-gray-100 overflow-hidden animate-pulse">
-                      <div className="h-24 bg-gray-200" />
+                      <div className="h-20 bg-gray-200" />
                       <div className="p-5 space-y-3">
                         <div className="h-3 bg-gray-100 rounded w-3/4" />
                         <div className="h-3 bg-gray-100 rounded w-1/2" />
@@ -258,31 +212,265 @@ export default function StudentsPage() {
                     </div>
                   ))}
                 </div>
-              ) : universities.length === 0 ? (
+              ) : unisWithMaterials.length === 0 ? (
                 <div className="text-center py-16 bg-white rounded-2xl border border-gray-100">
-                  <div className="text-5xl mb-3">🏛️</div>
-                  <p className="text-gray-500 text-sm">No universities found. Please check back later.</p>
+                  <div className="text-5xl mb-4">📚</div>
+                  <p className="text-gray-700 font-semibold mb-1">No study materials uploaded yet</p>
+                  <p className="text-gray-400 text-sm">Materials will appear here once added by TIMS admin.</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {universities.map((uni) => (
-                    <UniversityCard
-                      key={uni.slug}
-                      uni={uni}
-                      allCourses={coursesByUni[uni.slug] ?? []}
-                    />
-                  ))}
+                <div className="space-y-6">
+                  {unisWithMaterials.map(slug => {
+                    const uniMats = materialsByUni[slug]
+                    const uni = uniMap[slug]
+                    const isOpen = expandedUni === slug
+                    return (
+                      <div key={slug} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                        {/* Header */}
+                        <button
+                          className="w-full flex items-center justify-between p-5 hover:bg-gray-50 transition-colors"
+                          onClick={() => setExpandedUni(isOpen ? null : slug)}>
+                          <div className="flex items-center gap-3">
+                            {uni?.logo ? (
+                              <img src={uni.logo} alt={uni.shortName} className="w-10 h-10 rounded-xl object-contain bg-gray-50 border border-gray-100 p-1 shrink-0" />
+                            ) : (
+                              <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+                                style={{ background: 'linear-gradient(135deg,#2B3488,#CC2229)' }}>
+                                <span className="text-white font-bold text-sm">{(uni?.name || slug).charAt(0).toUpperCase()}</span>
+                              </div>
+                            )}
+                            <div className="text-left">
+                              <p className="font-bold text-gray-800 text-sm">{uni?.name || slug}</p>
+                              <p className="text-xs text-gray-400">{uniMats.length} material{uniMats.length !== 1 ? 's' : ''} available</p>
+                            </div>
+                          </div>
+                          <FiChevronDown size={16} className={`text-gray-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+                        </button>
+
+                        {/* Materials grouped by course */}
+                        {isOpen && (
+                          <div className="border-t border-gray-100">
+                            {Object.entries(
+                              uniMats.reduce<Record<string, StudyMaterial[]>>((acc, m) => {
+                                const key = m.courseTitle || 'General'
+                                if (!acc[key]) acc[key] = []
+                                acc[key].push(m)
+                                return acc
+                              }, {})
+                            ).map(([courseTitle, courseMats]) => (
+                              <div key={courseTitle} className="border-b border-gray-50 last:border-0">
+                                <div className="px-5 py-3 bg-gray-50 flex items-center gap-2">
+                                  <FiBookOpen size={13} className="text-primary-600" />
+                                  <span className="text-sm font-bold text-primary-700">{courseTitle}</span>
+                                  <span className="text-xs text-gray-400 ml-auto">{courseMats.length} file{courseMats.length !== 1 ? 's' : ''}</span>
+                                </div>
+                                <div className="divide-y divide-gray-50">
+                                  {courseMats.map(m => (
+                                    <div key={m._id} className="flex items-center justify-between gap-3 px-5 py-3.5 hover:bg-gray-50 transition-colors">
+                                      <div className="flex items-start gap-3 min-w-0">
+                                        <span className="text-xl shrink-0 mt-0.5">{typeIcon(m.type)}</span>
+                                        <div className="min-w-0">
+                                          <p className="font-semibold text-gray-800 text-sm truncate">{m.title}</p>
+                                          <div className="flex flex-wrap items-center gap-2 mt-0.5">
+                                            {m.subject && <span className="text-[11px] text-gray-500">{m.subject}</span>}
+                                            {m.semester && <span className="text-[11px] text-gray-400">· {m.semester}</span>}
+                                          </div>
+                                          {m.description && <p className="text-xs text-gray-400 mt-0.5 truncate">{m.description}</p>}
+                                        </div>
+                                      </div>
+                                      <div className="flex items-center gap-2 shrink-0">
+                                        <span className={`text-[11px] font-medium px-2 py-0.5 rounded-lg border ${typeBadge(m.type)}`}>
+                                          {m.type.toUpperCase()}
+                                        </span>
+                                        <a href={m.fileUrl} target="_blank" rel="noopener noreferrer"
+                                          className="flex items-center gap-1 px-3 py-1.5 bg-primary-600 text-white text-xs font-semibold rounded-lg hover:bg-primary-700 transition-all">
+                                          <FiDownload size={11} /> Download
+                                        </a>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )
+                  })}
                 </div>
               )}
 
               <div className="mt-8 bg-primary-50 rounded-2xl border border-primary-100 p-5 flex items-start gap-3">
                 <FiAlertCircle className="text-primary-600 shrink-0 mt-0.5" size={18} />
                 <p className="text-primary-700 text-sm">
-                  Can't find your syllabus?{' '}
+                  Can't find your study material?{' '}
                   <Link href="/contact" className="font-bold underline hover:text-accent">Contact TIMS</Link>
-                  {' '}and our team will send you the exact syllabus PDF within 24 hours.
+                  {' '}and our team will assist you within 24 hours.
                 </p>
               </div>
+            </div>
+          )}
+
+          {/* ── EXAMINATIONS ── */}
+          {activeTab === 'Examinations' && (
+            <div>
+              <div className="flex items-center gap-3 mb-8">
+                <div className="w-10 h-10 rounded-xl bg-primary-600 flex items-center justify-center">
+                  <FiCalendar className="text-white" size={18} />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold text-primary-800 font-heading">Examination Details</h2>
+                  <p className="text-gray-500 text-sm">Upcoming exam schedules, dates, and timetables</p>
+                </div>
+              </div>
+
+              {loadingExams ? (
+                <div className="space-y-4">
+                  {[1,2,3].map(i => <div key={i} className="bg-white rounded-2xl h-24 animate-pulse border border-gray-100" />)}
+                </div>
+              ) : exams.length === 0 ? (
+                <div className="text-center py-16 bg-white rounded-2xl border border-gray-100">
+                  <div className="text-5xl mb-4">📅</div>
+                  <p className="text-gray-700 font-semibold mb-1">No examination details yet</p>
+                  <p className="text-gray-400 text-sm">Exam schedules will appear here once published by TIMS.</p>
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  {Object.entries(examsByUni).map(([slug, uniExams]) => {
+                    const uni = uniMap[slug]
+                    // Group by courseTitle
+                    const courseGroups: Record<string, Examination[]> = {}
+                    for (const e of uniExams) {
+                      const key = e.courseTitle || 'General'
+                      if (!courseGroups[key]) courseGroups[key] = []
+                      courseGroups[key].push(e)
+                    }
+                    return (
+                      <div key={slug} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                        {/* University header */}
+                        <div className="flex items-center gap-3 p-5 border-b border-gray-100">
+                          {uni?.logo ? (
+                            <img src={uni.logo} alt={uni.shortName} className="w-10 h-10 rounded-xl object-contain bg-gray-50 border border-gray-100 p-1 shrink-0" />
+                          ) : (
+                            <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+                              style={{ background: 'linear-gradient(135deg,#2B3488,#CC2229)' }}>
+                              <span className="text-white font-bold text-sm">{(uniExams[0].universityName || slug).charAt(0).toUpperCase()}</span>
+                            </div>
+                          )}
+                          <div>
+                            <h3 className="font-bold text-primary-800 font-heading text-base">{uniExams[0].universityName || uni?.name || slug}</h3>
+                            <p className="text-xs text-gray-400">{uniExams.length} examination{uniExams.length !== 1 ? 's' : ''}</p>
+                          </div>
+                        </div>
+                        {/* Courses */}
+                        {Object.entries(courseGroups).map(([courseTitle, exams]) => (
+                          <div key={courseTitle} className="border-b border-gray-50 last:border-0">
+                            <div className="px-5 py-3 bg-gray-50 flex items-center gap-2">
+                              <FiBookOpen size={13} className="text-primary-600 shrink-0" />
+                              <span className="text-sm font-bold text-primary-700">{courseTitle}</span>
+                            </div>
+                            <div className="divide-y divide-gray-50">
+                              {exams.map(e => (
+                                <div key={e._id} className="p-5 hover:bg-gray-50 transition-colors">
+                                  <div className="flex items-start justify-between gap-4 flex-wrap">
+                                    <div className="flex-1 min-w-0">
+                                      <h4 className="font-bold text-gray-800 text-sm mb-1">{e.title}</h4>
+                                      {e.description && <p className="text-gray-500 text-sm mb-3">{e.description}</p>}
+                                      <div className="flex flex-wrap gap-4 text-sm">
+                                        {e.examDate && (
+                                          <div className="flex items-center gap-2">
+                                            <FiCalendar size={13} className="text-accent" />
+                                            <span className="text-gray-700 font-medium">Exam: <span className="text-accent font-semibold">{e.examDate}</span></span>
+                                          </div>
+                                        )}
+                                        {e.lastDate && (
+                                          <div className="flex items-center gap-2">
+                                            <FiCalendar size={13} className="text-primary-500" />
+                                            <span className="text-gray-700 font-medium">Last Date: <span className="text-primary-600 font-semibold">{e.lastDate}</span></span>
+                                          </div>
+                                        )}
+                                      </div>
+                                      {e.instructions && (
+                                        <p className="mt-3 text-xs text-gray-500 bg-amber-50 border border-amber-100 rounded-xl px-3 py-2 leading-relaxed">
+                                          📌 {e.instructions}
+                                        </p>
+                                      )}
+                                    </div>
+                                    {e.scheduleUrl && (
+                                      <a href={e.scheduleUrl} target="_blank" rel="noopener noreferrer"
+                                        className="flex items-center gap-1.5 px-4 py-2 bg-primary-600 text-white text-sm font-semibold rounded-xl hover:bg-primary-700 transition-all shrink-0 self-start">
+                                        <FiDownload size={13} /> Timetable
+                                      </a>
+                                    )}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* ── RESULTS ── */}
+          {activeTab === 'Results' && (
+            <div>
+              <div className="flex items-center gap-3 mb-8">
+                <div className="w-10 h-10 rounded-xl bg-primary-600 flex items-center justify-center">
+                  <FiAward className="text-white" size={18} />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold text-primary-800 font-heading">Results</h2>
+                  <p className="text-gray-500 text-sm">Published examination results by university and semester</p>
+                </div>
+              </div>
+
+              {loadingResults ? (
+                <div className="space-y-4">
+                  {[1,2,3].map(i => <div key={i} className="bg-white rounded-2xl h-20 animate-pulse border border-gray-100" />)}
+                </div>
+              ) : results.length === 0 ? (
+                <div className="text-center py-16 bg-white rounded-2xl border border-gray-100">
+                  <div className="text-5xl mb-4">🏆</div>
+                  <p className="text-gray-700 font-semibold mb-1">No results published yet</p>
+                  <p className="text-gray-400 text-sm">Results will appear here once published by TIMS.</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {Object.entries(resultsByUni).map(([slug, uniResults]) => {
+                    const uni = uniMap[slug]
+                    return (
+                      <div key={slug}>
+                        <UniGroupHeader slug={slug} name={uniResults[0].universityName || uni?.name || slug} logo={uni?.logo} />
+                        <div className="space-y-3 mb-6">
+                          {uniResults.map(r => (
+                            <div key={r._id}
+                              className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center justify-between gap-4 hover:shadow-md transition-all">
+                              <div className="flex-1 min-w-0">
+                                <h3 className="font-bold text-primary-800 font-heading text-sm mb-1">{r.title}</h3>
+                                {r.description && <p className="text-gray-500 text-xs mb-1">{r.description}</p>}
+                                <div className="flex flex-wrap gap-3 text-xs text-gray-500">
+                                  {r.semester && <span className="bg-primary-50 text-primary-600 px-2.5 py-0.5 rounded-lg font-medium border border-primary-100">{r.semester}</span>}
+                                  {r.publishedDate && <span>Published: {r.publishedDate}</span>}
+                                </div>
+                              </div>
+                              <a href={r.resultUrl} target="_blank" rel="noopener noreferrer"
+                                className="flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-xl shrink-0 transition-all"
+                                style={{ background: 'linear-gradient(135deg,#CC2229,#2B3488)', color: '#fff' }}>
+                                <FiExternalLink size={13} /> View Result
+                              </a>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
             </div>
           )}
 
@@ -364,11 +552,11 @@ export default function StudentsPage() {
             <p className="text-white/80 mb-6">Our support team is available Mon–Sat, 9 AM–6 PM. Always happy to help.</p>
             <div className="flex flex-wrap gap-4 justify-center">
               <Link href="/contact"
-                className="inline-flex items-center gap-2 px-7 py-3 bg-accent text-white font-bold rounded-xl hover:bg-accent-dark transition-all shadow-lg">
+                className="inline-flex items-center gap-2 px-7 py-3 bg-white text-[#CC2229] font-bold rounded-xl hover:bg-gray-100 transition-all shadow-lg">
                 Contact Us <FiArrowRight />
               </Link>
               <a href="tel:+917736111588"
-                className="inline-flex items-center gap-2 px-7 py-3 bg-white text-gray-700 font-semibold rounded-xl border-2 border-gray-300 hover:bg-gray-50 transition-all">
+                className="inline-flex items-center gap-2 px-7 py-3 bg-white/20 text-white font-semibold rounded-xl border-2 border-white/40 hover:bg-white/30 transition-all">
                 Call Now
               </a>
             </div>

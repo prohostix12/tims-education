@@ -4,10 +4,10 @@ import { WHY_TIMS, SERVICES } from '@/lib/data'
 
 export default function WhyTimsSection() {
   return (
-    <section className="bg-white py-20">
-      <div className="max-w-7xl mx-auto px-4">
+    <section className="bg-white py-24">
+      <div className="max-w-7xl mx-auto px-8">
         {/* Why TIMS */}
-        <div className="grid lg:grid-cols-2 gap-14 items-center mb-20">
+        <div className="grid lg:grid-cols-2 gap-14 items-center mb-16">
           <div>
             <p className="text-primary-600 font-semibold text-sm uppercase tracking-widest mb-2">Our Process</p>
             <h2 className="text-3xl md:text-4xl font-bold text-primary-800 font-heading mb-5">
