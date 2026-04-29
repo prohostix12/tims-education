@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { connectDB } from '@/lib/mongodb'
 import Contact from '@/models/Contact'
+import Subscription from '@/models/Subscription'
 
 export async function POST(req: NextRequest) {
   try {
@@ -13,6 +14,14 @@ export async function POST(req: NextRequest) {
 
     await connectDB()
     await Contact.create({ name, email: email || '', phone: phone || '', course: course || '', message: message || '', source: source || 'Contact Form' })
+
+    if (source === 'Newsletter' && email) {
+      await Subscription.findOneAndUpdate(
+        { email: email.toLowerCase().trim() },
+        { email: email.toLowerCase().trim(), name: name || '' },
+        { upsert: true, new: true },
+      ).catch(() => {})
+    }
 
     return NextResponse.json({ success: true, message: 'Message received. We will contact you shortly.' })
   } catch (err) {

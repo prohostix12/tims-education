@@ -126,7 +126,7 @@ export default function StudentsPage() {
   for (const u of unis) uniMap[u.slug] = u
 
   return (
-    <div className="pt-24">
+    <div className="">
 
       {/* ── Hero ── */}
       <section className="bg-gray-50 min-h-[90vh] flex items-center px-4 relative overflow-hidden">
@@ -136,7 +136,7 @@ export default function StudentsPage() {
 
         <div className="relative max-w-7xl mx-auto text-center">
           <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-3">Students Corner</p>
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 font-heading mb-4">Student Resources</h1>
+          <h1 className="text-3xl md:text-5xl font-bold text-gray-900 font-heading mb-4">Student Resources</h1>
           <p className="text-gray-600 text-lg max-w-2xl mx-auto mb-6">
             Everything you need as a TIMS student — study materials, exam schedules, results, news, and support.
           </p>
@@ -488,7 +488,7 @@ export default function StudentsPage() {
               </div>
               <div className="space-y-4">
                 {news.map((n, i) => (
-                  <div key={i} className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all p-6 flex items-start gap-5">
+                  <div key={i} className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all p-4 md:p-6 flex items-start gap-3 md:gap-5">
                     <div className="shrink-0 text-center">
                       <div className="w-14 h-14 rounded-xl bg-primary-50 border border-primary-100 flex flex-col items-center justify-center">
                         <span className="text-primary-800 font-bold text-xs font-heading">{n.date.split(' ')[0]}</span>
@@ -543,7 +543,7 @@ export default function StudentsPage() {
 
       {/* ── Bottom CTA ── */}
       <section className="bg-white py-14 px-4">
-        <div className="max-w-3xl mx-auto rounded-3xl p-10 text-center relative overflow-hidden"
+        <div className="max-w-3xl mx-auto rounded-3xl p-6 md:p-10 text-center relative overflow-hidden"
           style={{ background: 'linear-gradient(135deg, #CC2229 0%, #2B3488 100%)' }}>
           <div className="absolute inset-0 opacity-10"
             style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '25px 25px' }} />

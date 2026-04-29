@@ -5,7 +5,7 @@ import { WHY_TIMS, SERVICES } from '@/lib/data'
 export default function WhyTimsSection() {
   return (
     <section className="bg-white py-24">
-      <div className="max-w-7xl mx-auto px-8">
+      <div className="max-w-7xl mx-auto px-4 md:px-8">
         {/* Why TIMS */}
         <div className="grid lg:grid-cols-2 gap-14 items-center mb-16">
           <div>
@@ -34,7 +34,7 @@ export default function WhyTimsSection() {
               ))}
             </div>
 
-            <Link href="/contact"
+            <Link href="/course-finder"
               className="inline-flex items-center gap-2 mt-8 px-6 py-3 bg-primary-600 text-white font-semibold rounded-xl hover:bg-primary-700 transition-all shadow-md">
               Get Free Counselling <FiArrowRight />
             </Link>

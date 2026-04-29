@@ -56,14 +56,14 @@ export default function ContactPage() {
   }
 
   return (
-    <div className="pt-24">
+    <div className="">
       {/* Hero */}
       <section className="bg-gray-50 min-h-[90vh] flex items-center px-4 relative overflow-hidden">
         <div className="absolute inset-0 opacity-50"
           style={{ backgroundImage: 'radial-gradient(circle, #cbd5e1 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
         <div className="relative max-w-7xl mx-auto text-center">
           <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-3">Get in Touch</p>
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 font-heading mb-4">Contact Us</h1>
+          <h1 className="text-3xl md:text-5xl font-bold text-gray-900 font-heading mb-4">Contact Us</h1>
           <p className="text-gray-600 text-lg max-w-xl mx-auto">
             Have questions about admissions or programs? Reach out — our team is here to guide you.
           </p>
@@ -135,7 +135,7 @@ export default function ContactPage() {
           </div>
 
           {/* Contact Form */}
-          <div className="lg:col-span-2 bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
+          <div className="lg:col-span-2 bg-white rounded-2xl border border-gray-100 shadow-sm p-5 md:p-8">
             {fromFinder && (
               <div className="mb-6 flex items-start gap-3 p-4 rounded-xl border"
                 style={{ background: 'linear-gradient(135deg,rgba(43,52,136,0.07),rgba(204,34,41,0.07))', borderColor: 'rgba(43,52,136,0.2)' }}>
@@ -211,7 +211,7 @@ export default function ContactPage() {
       {/* Map placeholder */}
       <section className="bg-white py-10 px-4">
         <div className="max-w-7xl mx-auto">
-          <div className="rounded-2xl overflow-hidden border border-gray-200 shadow-sm h-80 bg-primary-50 flex items-center justify-center">
+          <div className="rounded-2xl overflow-hidden border border-gray-200 shadow-sm h-56 md:h-80 bg-primary-50 flex items-center justify-center">
             <div className="text-center">
               <FiMapPin className="text-primary-600 mx-auto mb-3" size={40} />
               <p className="font-semibold text-primary-800">Pamls Tower, Thazhepalam, Tirur, Kerala 676101</p>

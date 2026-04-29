@@ -8,14 +8,14 @@ export default function StatsSection() {
 
   return (
     <section className="bg-white py-14">
-      <div className="max-w-7xl mx-auto px-8">
+      <div className="max-w-7xl mx-auto px-4 md:px-8">
         <div ref={ref}
           className="bg-hero-gradient rounded-2xl shadow-xl grid grid-cols-2 md:grid-cols-4 gap-1 overflow-hidden">
           {STATS.map((stat, i) => (
             <div key={stat.label}
-              className={`flex flex-col items-center justify-center py-10 px-6 text-center ${i < STATS.length - 1 ? 'border-r border-white/15' : ''} hover:bg-white/10 transition-colors`}>
-              <span className="text-3xl mb-2">{stat.icon}</span>
-              <p className="text-4xl font-bold text-white font-heading">
+              className={`flex flex-col items-center justify-center py-7 px-3 md:py-10 md:px-6 text-center ${i < STATS.length - 1 ? 'border-r border-white/15' : ''} hover:bg-white/10 transition-colors`}>
+              <span className="text-2xl md:text-3xl mb-2">{stat.icon}</span>
+              <p className="text-2xl md:text-4xl font-bold text-white font-heading">
                 {inView ? <CountUp end={stat.value} duration={2.5} separator="," /> : '0'}
                 <span className="text-accent">{stat.suffix}</span>
               </p>

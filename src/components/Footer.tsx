@@ -7,20 +7,17 @@ import { FaFacebook, FaInstagram, FaYoutube, FaTwitter, FaTelegram } from 'react
 
 const quickLinks = [
   { label: 'Home', href: '/' },
+  { label: 'Course Finder', href: '/course-finder' },
   { label: 'About Us', href: '/about' },
-  { label: 'Courses', href: '/courses' },
-  { label: 'Universities', href: '/universities' },
-  { label: 'Blog', href: '/blog' },
-  { label: 'Contact', href: '/contact' },
 ]
 
 const programs = [
-  { label: 'Online UG Degree', href: '/courses?cat=ug' },
-  { label: 'Online PG Degree', href: '/courses?cat=pg' },
-  { label: 'B.Tech / M.Tech', href: '/courses?cat=engineering' },
-  { label: 'Diploma Programs', href: '/courses?cat=diploma' },
-  { label: 'Skill Courses', href: '/courses?cat=skill' },
-  { label: 'Apprenticeship', href: '/courses?cat=apprenticeship' },
+  { label: 'Online UG Degree', href: '/course-finder' },
+  { label: 'Online PG Degree', href: '/course-finder' },
+  { label: 'B.Tech / M.Tech', href: '/course-finder' },
+  { label: 'Diploma Programs', href: '/course-finder' },
+  { label: 'Skill Courses', href: '/course-finder' },
+  { label: 'Apprenticeship', href: '/course-finder' },
 ]
 
 export default function Footer() {
@@ -38,7 +35,7 @@ export default function Footer() {
   return (
     <footer className="bg-primary-800 text-white">
       {/* Main Footer */}
-      <div className="max-w-7xl mx-auto px-4 py-14 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+      <div className="max-w-7xl mx-auto px-4 py-10 md:py-14 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-10">
         {/* Brand */}
         <div>
           <div className="flex items-center gap-2.5 mb-4">

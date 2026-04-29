@@ -103,7 +103,7 @@ const states = [
 
 export default function AttestationPage() {
   return (
-    <div className="pt-24">
+    <div className="">
 
       {/* ── Hero ── */}
       <section className="bg-[#f7f7f5] min-h-[90vh] flex items-center px-4 relative overflow-hidden">

@@ -1,5 +1,5 @@
 'use client'
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import {
@@ -38,7 +38,7 @@ const categoryByQual: Record<string, { value: string; label: string; desc: strin
   ],
 }
 
-const steps = [
+const STATIC_WIDGET_STEPS = [
   {
     id: 'qualification' as keyof Answers,
     question: 'Your highest qualification?',
@@ -90,9 +90,24 @@ const steps = [
   },
 ]
 
+type WidgetStep = typeof STATIC_WIDGET_STEPS[number]
+
+function mergeWidgetSteps(dbSteps: { stepId: string; question: string; emoji: string; options: { value: string; label: string }[] }[]): WidgetStep[] {
+  if (!dbSteps.length) return STATIC_WIDGET_STEPS
+  return STATIC_WIDGET_STEPS.map(s => {
+    const db = dbSteps.find(d => d.stepId === (s.id as string))
+    if (!db) return s
+    return {
+      ...s,
+      question: db.question || s.question,
+      emoji:    db.emoji    || s.emoji,
+      options:  s.id === 'category' ? s.options : (db.options?.length ? db.options.map((o: { value: string; label: string }) => ({ value: o.value, label: o.label })) : s.options),
+    }
+  })
+}
+
 // Lead form appears after this step index (2 = interest)
 const LEAD_AFTER_STEP = 2
-const TOTAL_VISUAL = steps.length + 1  // +1 for lead form step
 
 function scoreMatch(course: typeof COURSES[0], a: Answers): number {
   let s = 0
@@ -117,16 +132,26 @@ function scoreMatch(course: typeof COURSES[0], a: Answers): number {
 
 export default function CourseFinderWidget() {
   const router = useRouter()
+  const [steps, setSteps]         = useState<WidgetStep[]>(STATIC_WIDGET_STEPS)
   const [open, setOpen]           = useState(false)
   const [step, setStep]           = useState(0)
   const [answers, setAnswers]     = useState<Answers>({ qualification:'', category:'', interest:'', mode:'', goal:'', budget:'' })
   const [showResults, setShowResults] = useState(false)
+
+  useEffect(() => {
+    fetch('/api/quiz-questions')
+      .then(r => r.json())
+      .then(d => { if (d.questions?.length) setSteps(mergeWidgetSteps(d.questions)) })
+      .catch(() => {})
+  }, [])
 
   // Lead form state
   const [showLead, setShowLead]     = useState(false)
   const [leadDone, setLeadDone]     = useState(false)
   const [lead, setLead]             = useState({ name: '', phone: '', email: '' })
   const [leadSaving, setLeadSaving] = useState(false)
+
+  const TOTAL_VISUAL = steps.length + 1  // +1 for lead form step
 
   const currentStep = steps[step]
   const options = currentStep.id === 'category'
@@ -226,7 +251,7 @@ export default function CourseFinderWidget() {
   return (
     <>
       {/* ── Floating Button ── */}
-      <div className="fixed bottom-20 right-7 z-50">
+      <div className="fixed bottom-6 right-4 sm:bottom-20 sm:right-7 z-50">
         <span className="absolute inset-0 rounded-full animate-ping opacity-25"
           style={{ background: 'linear-gradient(135deg,#CC2229,#2B3488)', animationDuration: '1.8s' }} />
         <span className="absolute inset-0 rounded-full animate-ping opacity-15"
@@ -250,17 +275,17 @@ export default function CourseFinderWidget() {
             style={{ maxHeight: '92vh' }}>
 
             {/* Header */}
-            <div className="px-7 py-5 flex items-center justify-between shrink-0"
+            <div className="px-4 py-3.5 sm:px-7 sm:py-5 flex items-center justify-between shrink-0"
               style={{ background: 'linear-gradient(135deg,#CC2229 0%,#2B3488 100%)' }}>
-              <div className="flex items-center gap-4">
-                <div className="w-11 h-11 bg-white/20 rounded-xl flex items-center justify-center text-2xl">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 sm:w-11 sm:h-11 bg-white/20 rounded-xl flex items-center justify-center text-xl sm:text-2xl shrink-0">
                   {headerEmoji}
                 </div>
                 <div>
                   <p className="text-white/70 text-xs font-semibold uppercase tracking-widest">
                     {headerSubtitle}
                   </p>
-                  <p className="text-white font-bold text-lg leading-tight">{headerTitle}</p>
+                  <p className="text-white font-bold text-sm sm:text-lg leading-tight">{headerTitle}</p>
                 </div>
               </div>
               <button onClick={close}
@@ -334,7 +359,7 @@ export default function CourseFinderWidget() {
                 </div>
               ) : showLead ? (
                 /* ── Lead form step ── */
-                <div className="p-7 space-y-4">
+                <div className="p-4 sm:p-7 space-y-4">
                   <p className="text-gray-500 text-sm text-center -mt-2 mb-2">
                     We&apos;ll send your personalised course results and have a counsellor reach out.
                   </p>
@@ -388,7 +413,7 @@ export default function CourseFinderWidget() {
                 </div>
               ) : (
                 /* ── Quiz options ── */
-                <div className="p-7 space-y-3">
+                <div className="p-4 sm:p-7 space-y-3">
                   {options.map((opt) => {
                     const sel = chosen === opt.value
                     return (
@@ -414,7 +439,7 @@ export default function CourseFinderWidget() {
             </div>
 
             {/* Footer nav */}
-            <div className="px-7 pb-6 pt-4 flex gap-3 border-t border-gray-100 shrink-0">
+            <div className="px-4 pb-4 pt-3 sm:px-7 sm:pb-6 flex gap-3 border-t border-gray-100 shrink-0">
               {showResults ? (
                 <>
                   <button onClick={restart}

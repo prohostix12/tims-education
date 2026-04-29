@@ -1,5 +1,5 @@
 'use client'
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import {
@@ -40,7 +40,7 @@ const categoryByQual: Record<string, { value: string; label: string; desc: strin
   ],
 }
 
-const steps = [
+const STATIC_STEPS = [
   {
     id: 'qualification' as keyof Answers,
     question: "What's your highest qualification?",
@@ -113,6 +113,23 @@ const steps = [
 // Lead form appears after step index 2 (interest)
 const LEAD_AFTER_STEP = 2
 
+type StepDef = typeof STATIC_STEPS[number]
+
+function mergeDbSteps(dbSteps: { stepId: string; question: string; subtitle: string; emoji: string; options: { value: string; label: string; desc: string }[] }[]): StepDef[] {
+  if (!dbSteps.length) return STATIC_STEPS
+  return STATIC_STEPS.map(s => {
+    const db = dbSteps.find(d => d.stepId === (s.id as string))
+    if (!db) return s
+    return {
+      ...s,
+      question: db.question || s.question,
+      subtitle: db.subtitle || s.subtitle,
+      emoji:    db.emoji    || s.emoji,
+      options:  s.id === 'category' ? s.options : (db.options?.length ? db.options : s.options),
+    }
+  })
+}
+
 function scoreMatch(course: typeof COURSES[0], a: Answers): number {
   let s = 0
   if (a.category && course.category !== a.category) return -1
@@ -150,9 +167,17 @@ const modeColor: Record<string, string> = {
 
 export default function CourseFinderPage() {
   const router = useRouter()
+  const [steps, setSteps]     = useState<StepDef[]>(STATIC_STEPS)
   const [step, setStep]       = useState(0)
   const [answers, setAnswers] = useState<Answers>({ qualification:'', category:'', interest:'', mode:'', goal:'', budget:'' })
   const [showResults, setResults] = useState(false)
+
+  useEffect(() => {
+    fetch('/api/quiz-questions')
+      .then(r => r.json())
+      .then(d => { if (d.questions?.length) setSteps(mergeDbSteps(d.questions)) })
+      .catch(() => {})
+  }, [])
 
   // Lead form state
   const [showLead, setShowLead]   = useState(false)
@@ -249,7 +274,7 @@ export default function CourseFinderPage() {
   const allDots = [...steps.slice(0, LEAD_AFTER_STEP + 1), { id: '__lead__' }, ...steps.slice(LEAD_AFTER_STEP + 1)]
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-20">
+    <div className="min-h-screen bg-gray-50">
       {/* dot grid */}
       <div className="fixed inset-0 pointer-events-none"
         style={{ backgroundImage: 'radial-gradient(circle,#d1d5db 1px,transparent 1px)', backgroundSize: '30px 30px', opacity: 0.4 }} />
@@ -474,7 +499,7 @@ export default function CourseFinderPage() {
           <div className="max-w-5xl mx-auto">
 
             {/* Results header */}
-            <div className="rounded-3xl p-8 mb-8 text-center relative overflow-hidden border border-gray-100"
+            <div className="rounded-3xl p-5 md:p-8 mb-8 text-center relative overflow-hidden border border-gray-100"
               style={{ background: 'linear-gradient(135deg,rgba(204,34,41,0.06),rgba(43,52,136,0.06))' }}>
               <div className="text-4xl mb-3">🎉</div>
               <h2 className="text-2xl md:text-3xl font-bold text-gray-900 font-heading mb-2">
@@ -512,7 +537,7 @@ export default function CourseFinderPage() {
             </div>
 
             {recs.length === 0 ? (
-              <div className="bg-white rounded-3xl p-12 text-center shadow-xl border border-gray-100">
+              <div className="bg-white rounded-3xl p-6 md:p-12 text-center shadow-xl border border-gray-100">
                 <div className="text-5xl mb-4">🔍</div>
                 <h3 className="text-xl font-bold text-gray-800 mb-2">No exact matches found</h3>
                 <p className="text-gray-500 mb-6 text-sm">Try different preferences for more results.</p>
@@ -575,7 +600,7 @@ export default function CourseFinderPage() {
             )}
 
             {/* Bottom CTA */}
-            <div className="mt-10 rounded-3xl p-8 text-center border border-gray-100"
+            <div className="mt-10 rounded-3xl p-5 md:p-8 text-center border border-gray-100"
               style={{ background: 'linear-gradient(135deg,rgba(43,52,136,0.06),rgba(204,34,41,0.06))' }}>
               <h3 className="text-xl font-bold text-gray-900 font-heading mb-2">Still not sure which program?</h3>
               <p className="text-gray-500 text-sm mb-5">Talk to a TIMS counsellor — free, no pressure, personalised guidance.</p>

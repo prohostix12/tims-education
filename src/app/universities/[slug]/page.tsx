@@ -80,7 +80,7 @@ export default function UniversityDetailPage() {
 
   if (loading) {
     return (
-      <div className="pt-24 min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <span className="w-10 h-10 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin" />
       </div>
     )
@@ -88,7 +88,7 @@ export default function UniversityDetailPage() {
 
   if (notFound || !uni) {
     return (
-      <div className="pt-24 min-h-screen flex flex-col items-center justify-center px-4">
+      <div className="min-h-screen flex flex-col items-center justify-center px-4">
         <h1 className="text-3xl font-bold text-primary-800 mb-3">University Not Found</h1>
         <Link href="/universities" className="text-primary-600 hover:underline flex items-center gap-1">
           <FiArrowLeft size={14} /> Back to Universities
@@ -100,7 +100,7 @@ export default function UniversityDetailPage() {
   const initial = uni.shortName?.charAt(0) ?? uni.name?.charAt(0) ?? 'U'
 
   return (
-    <div className="pt-24">
+    <div className="">
 
       {/* ── Hero ── */}
       <section className="bg-gray-50 min-h-[90vh] flex items-center px-4 relative overflow-hidden">
@@ -118,7 +118,7 @@ export default function UniversityDetailPage() {
             <span className="text-accent">{uni.shortName}</span>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center py-10 lg:py-0">
             <div>
               <div className="flex items-center gap-4 mb-6">
                 <div className="w-20 h-20 rounded-2xl bg-white border-2 border-gray-200 flex items-center justify-center shrink-0 overflow-hidden shadow-sm">

@@ -7,7 +7,7 @@ export default function ProgramsSection() {
 
   return (
     <section className="bg-white py-24">
-      <div className="max-w-7xl mx-auto px-8">
+      <div className="max-w-7xl mx-auto px-4 md:px-8">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
           <div>
             <p className="text-primary-600 font-semibold text-sm uppercase tracking-widest mb-2">Our Programs</p>
@@ -18,7 +18,7 @@ export default function ProgramsSection() {
               Chosen by thousands of students across Kerala — recognised programs from top universities.
             </p>
           </div>
-          <Link href="/courses"
+          <Link href="/course-finder"
             className="inline-flex items-center gap-2 text-primary-600 font-semibold text-sm hover:gap-3 transition-all shrink-0">
             View All Programs <FiArrowRight />
           </Link>
@@ -68,7 +68,7 @@ export default function ProgramsSection() {
         {/* All programs grid */}
         <div className="mt-10 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
           {COURSES.filter((c) => !c.popular).map((course) => (
-            <Link key={course.title} href="/courses"
+            <Link key={course.title} href="/course-finder"
               className="flex items-center gap-3 bg-gray-50 rounded-xl p-4 hover:bg-primary-50 hover:border-primary-200 border border-gray-100 transition-all group">
               <span className="text-2xl">{course.icon}</span>
               <div>

@@ -46,7 +46,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
   const paragraphs = post.content.split('\n\n').filter(Boolean)
 
   return (
-    <div className="pt-24">
+    <div className="">
 
       {/* ── Hero Banner ── */}
       <section className="bg-gray-50 min-h-[90vh] flex items-center px-4 relative overflow-hidden">

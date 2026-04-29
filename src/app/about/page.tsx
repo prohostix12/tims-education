@@ -90,10 +90,10 @@ const offices = [
 
 export default function AboutPage() {
   return (
-    <div className="pt-24">
+    <div>
 
       {/* ── Hero Banner ── */}
-      <section className="bg-gray-50 min-h-[90vh] flex items-center px-4 relative overflow-hidden">
+      <section className="bg-gray-50 min-h-[90vh] flex items-center px-4 py-16 lg:py-0 relative overflow-hidden">
         <div className="absolute inset-0 opacity-50"
           style={{ backgroundImage: 'radial-gradient(circle, #cbd5e1 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
         <div className="absolute top-0 right-0 w-96 h-96 bg-primary-100 rounded-full translate-x-32 -translate-y-32 blur-3xl" />
@@ -101,7 +101,7 @@ export default function AboutPage() {
         <div className="relative max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
           <div>
             <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-3">Who We Are</p>
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 font-heading leading-tight mb-5">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 font-heading leading-tight mb-5">
               Empowering Kerala's<br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-red-300">
                 Next Generation
@@ -364,7 +364,7 @@ export default function AboutPage() {
 
       {/* ── Final CTA ── */}
       <section className="bg-gray-50 py-16 px-4">
-        <div className="max-w-4xl mx-auto rounded-3xl p-12 text-center relative overflow-hidden"
+        <div className="max-w-4xl mx-auto rounded-3xl px-6 py-10 md:p-12 text-center relative overflow-hidden"
           style={{ background: 'linear-gradient(135deg, #CC2229 0%, #2B3488 100%)' }}>
           <div className="absolute inset-0 opacity-10"
             style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '25px 25px' }} />

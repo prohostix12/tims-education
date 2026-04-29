@@ -93,7 +93,7 @@ export default function UniversitiesPage() {
       : universities.filter(u => u.filterTags?.includes(activeFilter))
 
   return (
-    <div className="pt-24">
+    <div className="">
 
       {/* ── Hero ── */}
       <section className="bg-gray-50 min-h-[90vh] flex items-center px-4 relative overflow-hidden">
@@ -103,7 +103,7 @@ export default function UniversitiesPage() {
         <div className="relative max-w-7xl mx-auto">
           <div className="flex flex-col items-center text-center mb-10">
             <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-3">Our Network</p>
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 font-heading mb-4">Partner Universities</h1>
+            <h1 className="text-3xl md:text-5xl font-bold text-gray-900 font-heading mb-4">Partner Universities</h1>
             <p className="text-gray-600 text-lg max-w-2xl">
               Every university in our network is UGC-DEB approved and NAAC accredited — so your degree is recognised everywhere.
             </p>
@@ -346,7 +346,7 @@ export default function UniversitiesPage() {
 
       {/* ── CTA ── */}
       <section className="bg-white py-14 px-4">
-        <div className="max-w-3xl mx-auto rounded-3xl p-12 text-center relative overflow-hidden"
+        <div className="max-w-3xl mx-auto rounded-3xl p-6 md:p-12 text-center relative overflow-hidden"
           style={{ background: 'linear-gradient(135deg, #CC2229 0%, #2B3488 100%)' }}>
           <div className="absolute inset-0 opacity-10"
             style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '25px 25px' }} />

@@ -29,7 +29,7 @@ export default function CTASection() {
 
   return (
     <section className="bg-white py-0 mb-16">
-      <div className="max-w-7xl mx-auto px-8">
+      <div className="max-w-7xl mx-auto px-4 md:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2" style={{ minHeight: 500 }}>
 
           {/* ── Left: Award image panel ── */}
@@ -97,7 +97,7 @@ export default function CTASection() {
 
           {/* ── Right: Content panel ── */}
           <div
-            className="flex flex-col justify-center px-10 py-14 relative overflow-hidden"
+            className="flex flex-col justify-center px-5 py-8 lg:px-10 lg:py-14 relative overflow-hidden"
             style={{ background: '#f7f7f5' }}
           >
             {/* Dot grid */}
@@ -139,17 +139,17 @@ export default function CTASection() {
 
               <div className="flex flex-wrap gap-3">
                 <Link
-                  href="/contact"
+                  href="/course-finder"
                   className="inline-flex items-center gap-2 px-7 py-3.5 text-white font-bold rounded-xl text-sm transition-all hover:opacity-90 shadow-lg"
                   style={{ background: 'linear-gradient(135deg,#CC2229,#2B3488)' }}
                 >
                   Get Free Guidance <FiArrowRight size={15} />
                 </Link>
                 <Link
-                  href="/courses"
+                  href="/about"
                   className="inline-flex items-center gap-2 px-7 py-3.5 font-bold rounded-xl text-sm transition-all hover:bg-gray-100 border-2 border-gray-200 text-gray-700"
                 >
-                  Explore Programs
+                  Learn About Us
                 </Link>
               </div>
             </div>

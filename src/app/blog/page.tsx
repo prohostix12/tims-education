@@ -66,7 +66,7 @@ export default function BlogPage() {
   const recent = posts.filter((p) => !p.featured).slice(0, 4)
 
   return (
-    <div className="pt-24">
+    <div className="">
 
       {/* ── Hero ── */}
       <section className="bg-gray-50 min-h-[90vh] flex items-center px-4 relative overflow-hidden">
@@ -75,7 +75,7 @@ export default function BlogPage() {
         <div className="absolute top-0 right-0 w-72 h-72 bg-primary-100 rounded-full translate-x-24 -translate-y-24 blur-3xl" />
         <div className="relative max-w-7xl mx-auto text-center">
           <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-3">Knowledge Hub</p>
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 font-heading mb-4">Blog & Articles</h1>
+          <h1 className="text-3xl md:text-5xl font-bold text-gray-900 font-heading mb-4">Blog & Articles</h1>
           <p className="text-gray-600 text-lg max-w-2xl mx-auto mb-8">
             Expert insights on online education, career growth, university choices, and student success — written by the TIMS team.
           </p>
@@ -132,7 +132,7 @@ export default function BlogPage() {
                 <article className="group bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-xl transition-all">
                   <div className="grid md:grid-cols-5 gap-0">
                     {/* Left — visual */}
-                    <div className="md:col-span-2 bg-hero-gradient p-10 flex flex-col justify-between relative overflow-hidden min-h-[260px]">
+                    <div className="md:col-span-2 bg-hero-gradient p-6 md:p-10 flex flex-col justify-between relative overflow-hidden min-h-[180px] md:min-h-[260px]">
                       <div className="absolute inset-0 opacity-50"
                         style={{ backgroundImage: 'radial-gradient(circle, #cbd5e1 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
                       <div className="absolute bottom-0 right-0 w-40 h-40 bg-accent/20 rounded-full translate-x-12 translate-y-12 blur-2xl" />
@@ -148,7 +148,7 @@ export default function BlogPage() {
                     </div>
 
                     {/* Right — content */}
-                    <div className="md:col-span-3 p-8 flex flex-col justify-between">
+                    <div className="md:col-span-3 p-5 md:p-8 flex flex-col justify-between">
                       <div>
                         <div className="flex flex-wrap gap-2 mb-4">
                           {featured.tags.map((t) => (
@@ -325,7 +325,7 @@ export default function BlogPage() {
 
       {/* ── Newsletter ── */}
       <section className="bg-white py-14 px-4">
-        <div className="max-w-2xl mx-auto rounded-3xl p-10 text-center relative overflow-hidden"
+        <div className="max-w-2xl mx-auto rounded-3xl p-6 md:p-10 text-center relative overflow-hidden"
           style={{ background: 'linear-gradient(135deg, #CC2229 0%, #2B3488 100%)' }}>
           <div className="absolute inset-0 opacity-10"
             style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
@@ -338,7 +338,7 @@ export default function BlogPage() {
                 ✅ You&apos;re subscribed! We&apos;ll keep you updated.
               </div>
             ) : (
-              <form className="flex gap-3 max-w-sm mx-auto" onSubmit={subscribe}>
+              <form className="flex flex-col sm:flex-row gap-3 max-w-sm mx-auto" onSubmit={subscribe}>
                 <input type="email" required placeholder="your@email.com"
                   value={subEmail} onChange={e => setSubEmail(e.target.value)}
                   className="flex-1 px-4 py-3 rounded-xl text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-white/50" />

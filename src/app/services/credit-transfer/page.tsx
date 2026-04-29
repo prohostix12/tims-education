@@ -101,7 +101,7 @@ const faqs = [
 
 export default function CreditTransferPage() {
   return (
-    <div className="pt-24">
+    <div className="">
 
       {/* ── Hero ── */}
       <section className="bg-[#f7f7f5] min-h-[90vh] flex items-center px-4 relative overflow-hidden">
@@ -264,7 +264,7 @@ export default function CreditTransferPage() {
 
       {/* ── CTA ── */}
       <section className="bg-gray-50 py-14 px-4">
-        <div className="max-w-3xl mx-auto rounded-3xl p-10 text-center relative overflow-hidden"
+        <div className="max-w-3xl mx-auto rounded-3xl p-6 md:p-10 text-center relative overflow-hidden"
           style={{ background: 'linear-gradient(135deg, #CC2229 0%, #2B3488 100%)' }}>
           <div className="absolute inset-0 opacity-10"
             style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '25px 25px' }} />

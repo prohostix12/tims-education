@@ -206,7 +206,7 @@ export default function CoursesPage() {
   const progressPct = Math.round((stepIndex / (steps.length - 1)) * 100)
 
   return (
-    <div className="pt-24">
+    <div className="">
 
       {/* ── Hero ── */}
       <section className="bg-gray-50 min-h-[90vh] flex items-center px-4 relative overflow-hidden">
@@ -215,7 +215,7 @@ export default function CoursesPage() {
         <div className="absolute bottom-0 right-0 w-72 h-72 bg-primary-100 rounded-full translate-x-20 translate-y-20 blur-3xl" />
         <div className="relative max-w-7xl mx-auto text-center">
           <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-3">Programs & Courses</p>
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 font-heading mb-4">Explore All Programs</h1>
+          <h1 className="text-3xl md:text-5xl font-bold text-gray-900 font-heading mb-4">Explore All Programs</h1>
           <p className="text-gray-600 text-lg max-w-xl mx-auto mb-8">
             UGC-approved online and distance programs from top universities — tailored to your goals.
           </p>
@@ -329,7 +329,7 @@ export default function CoursesPage() {
 
       {/* ── Bottom CTA ── */}
       <section className="bg-white py-14 px-4">
-        <div className="max-w-3xl mx-auto rounded-3xl p-12 text-center relative overflow-hidden"
+        <div className="max-w-3xl mx-auto rounded-3xl p-6 md:p-12 text-center relative overflow-hidden"
           style={{ background: 'linear-gradient(135deg, #CC2229 0%, #2B3488 100%)' }}>
           <div className="absolute inset-0 opacity-10"
             style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '25px 25px' }} />
@@ -356,7 +356,7 @@ export default function CoursesPage() {
           <div className="absolute inset-0 bg-primary-900/70" />
           <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
             onClick={e => e.stopPropagation()}>
-            <div className="bg-hero-gradient p-8 rounded-t-3xl relative overflow-hidden">
+            <div className="bg-hero-gradient p-5 md:p-8 rounded-t-3xl relative overflow-hidden">
               <div className="absolute top-0 right-0 w-40 h-40 bg-accent/15 rounded-full translate-x-12 -translate-y-12" />
               <button onClick={() => setSelected(null)}
                 className="absolute top-4 right-4 w-9 h-9 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-all">
@@ -385,7 +385,7 @@ export default function CoursesPage() {
                 </div>
               ))}
             </div>
-            <div className="p-8 space-y-7">
+            <div className="p-5 md:p-8 space-y-7">
               {selected.fullDescription && (
                 <div>
                   <h3 className="font-bold text-primary-800 font-heading mb-2 flex items-center gap-2">
@@ -448,7 +448,7 @@ export default function CoursesPage() {
                   📄 Download Syllabus PDF
                 </a>
               )}
-              <div className="flex gap-3 pt-2">
+              <div className="flex flex-col sm:flex-row gap-3 pt-2">
                 <Link href="/contact"
                   className="flex-1 flex items-center justify-center gap-2 py-3.5 bg-accent text-white font-bold rounded-xl hover:bg-accent-dark transition-all shadow-md text-sm">
                   Enquire / Apply Now <FiArrowRight />

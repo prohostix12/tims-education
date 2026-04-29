@@ -5,7 +5,7 @@ import { UNIVERSITIES } from '@/lib/data'
 export default function UniversitiesSection() {
   return (
     <section className="bg-gray-50 py-24">
-      <div className="max-w-7xl mx-auto px-8">
+      <div className="max-w-7xl mx-auto px-4 md:px-8">
         <div className="text-center mb-12">
           <p className="text-primary-600 font-semibold text-sm uppercase tracking-widest mb-2">Partner Universities</p>
           <h2 className="text-3xl md:text-4xl font-bold text-primary-800 font-heading mb-4">
@@ -40,9 +40,9 @@ export default function UniversitiesSection() {
         </div>
 
         <div className="text-center mt-10">
-          <Link href="/universities"
+          <Link href="/course-finder"
             className="inline-flex items-center gap-2 px-6 py-3 bg-primary-600 text-white font-semibold rounded-xl hover:bg-primary-700 transition-all shadow-md hover:shadow-lg">
-            View All Partner Universities <FiArrowRight />
+            Find Your Program <FiArrowRight />
           </Link>
         </div>
       </div>
